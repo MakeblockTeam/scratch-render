@@ -1,5 +1,5 @@
 const twgl = require('twgl.js');
-
+const { fabric } = require('fabric-pure-browser');
 const Skin = require('./Skin');
 const SvgRenderer = require('scratch-svg-renderer').SVGRenderer;
 const ShaderManager = require('./ShaderManager');
@@ -22,14 +22,14 @@ class SVGSkin extends Skin {
      * @constructor
      * @extends Skin
      */
-    constructor (id, renderer) {
+    constructor(id, renderer) {
         super(id);
 
         /** @type {RenderWebGL} */
         this._renderer = renderer;
 
         /** @type {SvgRenderer} */
-        this._svgRenderer = new SvgRenderer();
+        // this._svgRenderer = new SvgRenderer();
 
         /** @type {Array<WebGLTexture>} */
         this._scaledMIPs = [];
@@ -37,17 +37,20 @@ class SVGSkin extends Skin {
         /** @type {number} */
         this._largestMIPScale = 0;
 
+        this._size = [0, 0];
+        this._obj = null;
+        this._visible = false;
         /**
-        * Ratio of the size of the SVG and the max size of the WebGL texture
-        * @type {Number}
-        */
+         * Ratio of the size of the SVG and the max size of the WebGL texture
+         * @type {Number}
+         */
         this._maxTextureScale = 1;
     }
 
     /**
      * Dispose of this object. Do not use it after calling this method.
      */
-    dispose () {
+    dispose() {
         this.resetMIPs();
         super.dispose();
     }
@@ -55,18 +58,28 @@ class SVGSkin extends Skin {
     /**
      * @return {Array<number>} the natural size, in Scratch units, of this skin.
      */
-    get size () {
-        return this._svgRenderer.size;
+    get size() {
+        return this._size;
     }
 
-    useNearest (scale, drawable) {
+    get obj() {
+        return this._obj;
+    }
+
+    get renderer() {
+        return this._renderer;
+    }
+
+    useNearest(scale, drawable) {
         // If the effect bits for mosaic, pixelate, whirl, or fisheye are set, use linear
-        if ((drawable.enabledEffects & (
-            ShaderManager.EFFECT_INFO.fisheye.mask |
-            ShaderManager.EFFECT_INFO.whirl.mask |
-            ShaderManager.EFFECT_INFO.pixelate.mask |
-            ShaderManager.EFFECT_INFO.mosaic.mask
-        )) !== 0) {
+        if (
+            (drawable.enabledEffects &
+                (ShaderManager.EFFECT_INFO.fisheye.mask |
+                    ShaderManager.EFFECT_INFO.whirl.mask |
+                    ShaderManager.EFFECT_INFO.pixelate.mask |
+                    ShaderManager.EFFECT_INFO.mosaic.mask)) !==
+            0
+        ) {
             return false;
         }
 
@@ -81,8 +94,12 @@ class SVGSkin extends Skin {
         // TODO: Make this check more precise. We should use nearest if there's less than one pixel's difference
         // between the screen-space and texture-space sizes of the skin. Mipmaps make this harder because there are
         // multiple textures (and hence multiple texture spaces) and we need to know which one to choose.
-        if (Math.abs(scale[0]) > 99 && Math.abs(scale[0]) < 101 &&
-            Math.abs(scale[1]) > 99 && Math.abs(scale[1]) < 101) {
+        if (
+            Math.abs(scale[0]) > 99 &&
+            Math.abs(scale[0]) < 101 &&
+            Math.abs(scale[1]) > 99 &&
+            Math.abs(scale[1]) < 101
+        ) {
             return true;
         }
         return false;
@@ -93,39 +110,33 @@ class SVGSkin extends Skin {
      * @param {number} scale - The relative size of the MIP
      * @return {SVGMIP} An object that handles creating and updating SVG textures.
      */
-    createMIP (scale) {
-        this._svgRenderer.draw(scale);
-
+    createMIP(scale) {
+        // this._svgRenderer.draw(scale);
         // Pull out the ImageData from the canvas. ImageData speeds up
         // updating Silhouette and is better handled by more browsers in
         // regards to memory.
-        const canvas = this._svgRenderer.canvas;
+        // const canvas = this._svgRenderer.canvas;
         // If one of the canvas dimensions is 0, set this MIP to an empty image texture.
         // This avoids an IndexSizeError from attempting to getImageData when one of the dimensions is 0.
-        if (canvas.width === 0 || canvas.height === 0) return super.getTexture();
-
-        const context = canvas.getContext('2d');
-        const textureData = context.getImageData(0, 0, canvas.width, canvas.height);
-
-        const textureOptions = {
-            auto: false,
-            wrap: this._renderer.gl.CLAMP_TO_EDGE,
-            src: textureData,
-            premultiplyAlpha: true
-        };
-
-        const mip = twgl.createTexture(this._renderer.gl, textureOptions);
-
-        // Check if this is the largest MIP created so far. Currently, silhouettes only get scaled up.
-        if (this._largestMIPScale < scale) {
-            this._silhouette.update(textureData);
-            this._largestMIPScale = scale;
-        }
-
-        return mip;
+        // if (canvas.width === 0 || canvas.height === 0) return super.getTexture();
+        // const context = canvas.getContext('2d');
+        // const textureData = context.getImageData(0, 0, canvas.width, canvas.height);
+        // const textureOptions = {
+        //     auto: false,
+        //     wrap: this._renderer.gl.CLAMP_TO_EDGE,
+        //     src: textureData,
+        //     premultiplyAlpha: true
+        // };
+        // const mip = twgl.createTexture(this._renderer.gl, textureOptions);
+        // // Check if this is the largest MIP created so far. Currently, silhouettes only get scaled up.
+        // if (this._largestMIPScale < scale) {
+        //     this._silhouette.update(textureData);
+        //     this._largestMIPScale = scale;
+        // }
+        // return mip;
     }
 
-    updateSilhouette (scale = [100, 100]) {
+    updateSilhouette(scale = [100, 100]) {
         // Ensure a silhouette exists.
         this.getTexture(scale);
     }
@@ -134,7 +145,8 @@ class SVGSkin extends Skin {
      * @param {Array<number>} scale - The scaling factors to be used, each in the [0,100] range.
      * @return {WebGLTexture} The GL texture representation of this skin when drawing at the given scale.
      */
-    getTexture (scale) {
+    getTexture(scale) {
+        console.log({ scale });
         // The texture only ever gets uniform scale. Take the larger of the two axes.
         const scaleMax = scale ? Math.max(Math.abs(scale[0]), Math.abs(scale[1])) : 100;
         const requestedScale = Math.min(scaleMax / 100, this._maxTextureScale);
@@ -147,9 +159,9 @@ class SVGSkin extends Skin {
         // Can't use bitwise stuff here because we need to handle negative exponents
         const mipScale = Math.pow(2, mipLevel - INDEX_OFFSET);
 
-        if (this._svgRenderer.loaded && !this._scaledMIPs[mipLevel]) {
-            this._scaledMIPs[mipLevel] = this.createMIP(mipScale);
-        }
+        // if (this._svgRenderer.loaded && !this._scaledMIPs[mipLevel]) {
+        //     this._scaledMIPs[mipLevel] = this.createMIP(mipScale);
+        // }
 
         return this._scaledMIPs[mipLevel] || super.getTexture();
     }
@@ -160,8 +172,8 @@ class SVGSkin extends Skin {
      * calculated from the bounding box
      * @fires Skin.event:WasAltered
      */
-    resetMIPs () {
-        this._scaledMIPs.forEach(oldMIP => this._renderer.gl.deleteTexture(oldMIP));
+    resetMIPs() {
+        this._scaledMIPs.forEach((oldMIP) => this._renderer.gl.deleteTexture(oldMIP));
         this._scaledMIPs.length = 0;
         this._largestMIPScale = 0;
     }
@@ -171,31 +183,74 @@ class SVGSkin extends Skin {
      * @param {string} svgData - new SVG to use.
      * @param {Array<number>} [rotationCenter] - Optional rotation center for the SVG.
      */
-    setSVG (svgData, rotationCenter) {
-        this._svgRenderer.loadSVG(svgData, false, () => {
-            const svgSize = this._svgRenderer.size;
-            if (svgSize[0] === 0 || svgSize[1] === 0) {
-                super.setEmptyImageData();
+    setSVG(svgData, rotationCenter) {
+        fabric.loadSVGFromString(svgData, (objects, opts) => {
+            if (objects.length === 0) {
                 return;
             }
-
-            const maxDimension = Math.ceil(Math.max(this.size[0], this.size[1]));
-            let testScale = 2;
-            for (testScale; maxDimension * testScale <= MAX_TEXTURE_DIMENSION; testScale *= 2) {
-                this._maxTextureScale = testScale;
-            }
-
-            this.resetMIPs();
-
-            if (typeof rotationCenter === 'undefined') rotationCenter = this.calculateRotationCenter();
-            const viewOffset = this._svgRenderer.viewOffset;
-            this._rotationCenter[0] = rotationCenter[0] - viewOffset[0];
-            this._rotationCenter[1] = rotationCenter[1] - viewOffset[1];
-
+            const { width = 0, height = 0 } = opts;
+            this._size = [width, height];
+            // const scale = width / height;
+            // const MAX_SIZE = 120;
+            // if (scale > 1) {
+            //     opts.height = height * MAX_SIZE / width;
+            //     opts.width = MAX_SIZE;
+            // } else {
+            //     opts.width = width * MAX_SIZE / height;
+            //     opts.height = MAX_SIZE;
+            // }
+            // opts.viewBoxWidth = opts.width;
+            // opts.viewBoxHeight = opts.height;
+            const options = {
+                ...opts,
+                top: 0,
+                left: 0,
+                originX: 'center',
+                originY: 'center',
+                visible: this._visible
+            };
+            const obj = new fabric.Group(objects, options);
+            this._renderer._canvas.add(obj);
+            this._obj = obj;
             this.emit(Skin.Events.WasAltered);
         });
+        // this._svgRenderer.loadSVG(svgData, false, () => {
+        //     const svgSize = this._svgRenderer.size;
+        //     if (svgSize[0] === 0 || svgSize[1] === 0) {
+        //         super.setEmptyImageData();
+        //         return;
+        //     }
+        //     const maxDimension = Math.ceil(Math.max(this.size[0], this.size[1]));
+        //     let testScale = 2;
+        //     for (testScale; maxDimension * testScale <= MAX_TEXTURE_DIMENSION; testScale *= 2) {
+        //         this._maxTextureScale = testScale;
+        //     }
+        //     this.resetMIPs();
+        //     if (typeof rotationCenter === 'undefined') rotationCenter = this.calculateRotationCenter();
+        //     const viewOffset = this._svgRenderer.viewOffset;
+        //     this._rotationCenter[0] = rotationCenter[0] - viewOffset[0];
+        //     this._rotationCenter[1] = rotationCenter[1] - viewOffset[1];
+        //     this.emit(Skin.Events.WasAltered);
+        // });
     }
 
+    get visible() {
+        return this._visible;
+    }
+
+    set visible(value) {
+        if (this._obj) {
+            this._visible = value;
+            this._obj.set('visible', value);
+            this._renderer._canvas.requestRenderAll();
+        }
+    }
+    // toggleVisble(visible = false) {
+    //     if (this._obj) {
+    //         this._obj.set('visible', visible);
+    //         this._renderer._canvas.renderAll();
+    //     }
+    // }
 }
 
 module.exports = SVGSkin;

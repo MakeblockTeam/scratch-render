@@ -168,7 +168,6 @@ class PenSkin extends Skin {
         // See https://github.com/LLK/scratch-render/pull/314
         const diameter = penAttributes.diameter || DefaultPenAttributes.diameter;
         const offset = (diameter === 1 || diameter === 3) ? 0.5 : 0;
-
         this._drawLineOnBuffer(
             penAttributes,
             x0 + offset, y0 + offset,
@@ -262,9 +261,8 @@ class PenSkin extends Skin {
             u_lineLength: lineLength,
             u_penPoints: [x0, -y0, lineDiffX, -lineDiffY]
         };
-
+        console.log(uniforms);
         twgl.setUniforms(currentShader, uniforms);
-
         twgl.drawBufferInfo(gl, this._lineBufferInfo, gl.TRIANGLES);
 
         this._silhouetteDirty = true;

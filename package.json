@@ -1,5 +1,5 @@
 {
-  "name": "scratch-render",
+  "name": "@mblock/scratch-render",
   "version": "0.2.0-201912192117",
   "description": "WebGL Renderer for Scratch 3.0",
   "author": "Massachusetts Institute of Technology",
@@ -37,16 +37,17 @@
     "jsdoc": "^3.6.0",
     "json": "^9.0.4",
     "playwright-chromium": "^1.0.1",
+    "raw-loader": "^0.5.1",
     "scratch-vm": "0.2.0-prerelease.20200924195620",
     "tap": "^11.0.0",
     "travis-after-all": "^1.4.4",
     "uglifyjs-webpack-plugin": "^1.2.5",
     "webpack": "^4.8.0",
     "webpack-cli": "^3.1.0",
-    "webpack-dev-server": "^3.1.4",
-    "raw-loader": "^0.5.1"
+    "webpack-dev-server": "^3.1.4"
   },
   "dependencies": {
+    "fabric-pure-browser": "^4.2.0",
     "grapheme-breaker": "0.3.2",
     "hull.js": "0.2.10",
     "ify-loader": "1.0.4",

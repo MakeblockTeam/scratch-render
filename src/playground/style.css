@@ -1,11 +1,16 @@
 body {
-	background: lightsteelblue;
+    margin: 0;
+    padding: 2rem;
 }
 
 canvas {
-	border: 3px dashed black;
+    /* border: 2px dashed #ddd; */
+    display: block;
+    box-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.5);
+    max-width: 100%;
 }
 
 #debug-canvas {
-	border-color: red;
+    margin-top: 2rem;
+    border-color: red;
 }

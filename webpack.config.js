@@ -31,6 +31,9 @@ const base = {
             })
         ]
     },
+    resolve: {
+        alias: {fabric: 'fabric-pure-browser'}
+    },
     plugins: []
 };
 
