@@ -1,5 +1,6 @@
 const twgl = require('twgl.js');
 const { fabric } = require('fabric-pure-browser');
+const PIXI = require('pixi.js-legacy');
 const Skin = require('./Skin');
 const SvgRenderer = require('scratch-svg-renderer').SVGRenderer;
 const ShaderManager = require('./ShaderManager');
@@ -45,6 +46,8 @@ class SVGSkin extends Skin {
          * @type {Number}
          */
         this._maxTextureScale = 1;
+
+        this._pixiLoader = new PIXI.Loader();
     }
 
     /**
@@ -68,6 +71,10 @@ class SVGSkin extends Skin {
 
     get renderer() {
         return this._renderer;
+    }
+
+    get pixiInstance() {
+        return this._renderer._pixiInstance;
     }
 
     useNearest(scale, drawable) {
@@ -179,41 +186,134 @@ class SVGSkin extends Skin {
     }
 
     /**
+     * 创建精灵图
+     *
+     * @param {*} baseTexture
+     * @memberof SVGSkin
+     */
+    createSprite(baseTexture) {
+        const texture = new PIXI.Texture(baseTexture);
+        const sprite = new PIXI.Sprite.from(texture);
+        this._obj = sprite;
+    }
+
+    /**
+     * 初始化精灵图配置
+     *
+     * @param {*} baseTexture
+     * @memberof SVGSkin
+     */
+    initSprite(baseTexture) {
+        this.resetMIPs();
+        const { width = 0, height = 0 } = baseTexture;
+        const onDragStart = function (event) {
+            this.data = event.data;
+            this.alpha = 0.5;
+            this.dragging = true;
+        }
+        const onDragEnd = function () {
+            this.alpha = 1;
+            this.dragging = false;
+            this.data = null;
+        }
+        const onDragMove = function () {
+            if (this.dragging) {
+                const newPosition = this.data.getLocalPosition(this.parent);
+                this.x = newPosition.x;
+                this.y = newPosition.y;
+            }
+        }
+        // 设置宽度
+        this._obj.width = width;
+        // 设置高度
+        this._obj.height = height;
+        // 设置定位，默认居中
+        this._obj.position.set(0, 0);
+        // 设置中心点
+        this._obj.anchor.set(0.5, 0.5);
+        // 设置是否可见
+        this._obj.visible = this._visible;
+        // 设置是否支持互动
+        this._obj.interactive = true;
+        // 设置鼠标光标悬停
+        this._obj.buttonMode = true;
+        // 设置交互效果
+        this._obj
+            .on('pointerdown', onDragStart.bind(this._obj))
+            .on('pointerup', onDragEnd.bind(this._obj))
+            .on('pointerupoutside', onDragEnd.bind(this._obj))
+            .on('pointermove', onDragMove.bind(this._obj));
+    }
+
+    /**
+     * 渲染精灵图至舞台
+     *
+     * @param {*} sprite
+     * @memberof SVGSkin
+     */
+    addSprite(sprite) {
+        this.pixiInstance.stage.addChild(sprite);
+    }
+
+    /**
      * Set the contents of this skin to a snapshot of the provided SVG data.
      * @param {string} svgData - new SVG to use.
      * @param {Array<number>} [rotationCenter] - Optional rotation center for the SVG.
      */
     setSVG(svgData, rotationCenter) {
-        fabric.loadSVGFromString(svgData, (objects, opts) => {
-            if (objects.length === 0) {
-                return;
-            }
-            const { width = 0, height = 0 } = opts;
-            this._size = [width, height];
-            // const scale = width / height;
-            // const MAX_SIZE = 120;
-            // if (scale > 1) {
-            //     opts.height = height * MAX_SIZE / width;
-            //     opts.width = MAX_SIZE;
-            // } else {
-            //     opts.width = width * MAX_SIZE / height;
-            //     opts.height = MAX_SIZE;
-            // }
-            // opts.viewBoxWidth = opts.width;
-            // opts.viewBoxHeight = opts.height;
-            const options = {
-                ...opts,
-                top: 0,
-                left: 0,
-                originX: 'center',
-                originY: 'center',
-                visible: this._visible
-            };
-            const obj = new fabric.Group(objects, options);
-            this._renderer._canvas.add(obj);
-            this._obj = obj;
-            this.emit(Skin.Events.WasAltered);
-        });
+        const baseTexture = new PIXI.BaseTexture(svgData);
+        this.createSprite(baseTexture);
+        // 判断是否已有缓存
+        if (baseTexture.hasLoaded) {
+            this.initSprite(baseTexture);
+        } else {
+            baseTexture.on('loaded', () => {
+                this.initSprite(baseTexture);
+            });
+        }
+        this.emit(Skin.Events.WasAltered);
+
+        // can be loaded from cache
+        // if (baseTexture.hasLoaded) {
+        // } else {
+        //     baseTexture.on('loaded', () => {
+        //         this.createSprite(baseTexture);
+        //     });
+        // }
+        // const sprite = PIXI.Sprite.from(svgData);
+        // sprite.interactive = true;
+        // this._obj = sprite;
+
+        // fabric.loadSVGFromString(svgData, (objects, opts) => {
+        //     if (objects.length === 0) {
+        //         return;
+        //     }
+        //     const { width = 0, height = 0 } = opts;
+        //     this._size = [width, height];
+        //     // const scale = width / height;
+        //     // const MAX_SIZE = 120;
+        //     // if (scale > 1) {
+        //     //     opts.height = height * MAX_SIZE / width;
+        //     //     opts.width = MAX_SIZE;
+        //     // } else {
+        //     //     opts.width = width * MAX_SIZE / height;
+        //     //     opts.height = MAX_SIZE;
+        //     // }
+        //     // opts.viewBoxWidth = opts.width;
+        //     // opts.viewBoxHeight = opts.height;
+        //     const options = {
+        //         ...opts,
+        //         top: 0,
+        //         left: 0,
+        //         originX: 'center',
+        //         originY: 'center',
+        //         visible: this._visible
+        //     };
+        //     const obj = new fabric.Group(objects, options);
+        //     this._renderer._canvas.add(obj);
+        //     this._obj = obj;
+        //     this.emit(Skin.Events.WasAltered);
+        // });
         // this._svgRenderer.loadSVG(svgData, false, () => {
         //     const svgSize = this._svgRenderer.size;
         //     if (svgSize[0] === 0 || svgSize[1] === 0) {
@@ -241,8 +341,8 @@ class SVGSkin extends Skin {
     set visible(value) {
         if (this._obj) {
             this._visible = value;
-            this._obj.set('visible', value);
-            this._renderer._canvas.requestRenderAll();
+            this._obj.visible = value;
+            this.addSprite(this._obj);
         }
     }
     // toggleVisble(visible = false) {

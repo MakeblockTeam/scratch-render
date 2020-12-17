@@ -15,7 +15,7 @@
     "build": "webpack --progress --colors",
     "docs": "jsdoc -c .jsdoc.json",
     "lint": "eslint .",
-    "prepublish": "npm run build",
+    "prepublish": "",
     "prepublish-watch": "npm run watch",
     "start": "webpack-dev-server",
     "tap": "tap test/unit test/integration",
@@ -53,6 +53,7 @@
     "ify-loader": "1.0.4",
     "linebreak": "0.3.0",
     "minilog": "3.1.0",
+    "pixi.js-legacy": "^5.3.3",
     "scratch-storage": "^1.0.0",
     "scratch-svg-renderer": "0.2.0-prerelease.20201019174008",
     "twgl.js": "4.4.0"

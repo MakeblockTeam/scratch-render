@@ -3,6 +3,7 @@ const EventEmitter = require('events');
 // const hull = require('hull.js');
 // const twgl = require('twgl.js');
 const { fabric } = require('fabric-pure-browser');
+const PIXI = require('pixi.js-legacy');
 const BitmapSkin = require('./BitmapSkin');
 const Drawable = require('./Drawable');
 const Rectangle = require('./Rectangle');
@@ -119,19 +120,44 @@ class RenderWebGL extends EventEmitter {
      * @private
      */
     static _getContext(canvas, w = 480, h = 360) {
-        const cv = new fabric.Canvas(canvas, {
+        const app = new PIXI.Application({
+            // 画布视图
+            view: canvas,
+            // 宽度
             width: w,
-            height: h
+            // 高度
+            height: h,
+            // 抗锯齿
+            antialias: true,
+            // 根据CSS自动调整屏幕尺寸
+            autoDensity: true,
+            // 分辨率
+            resolution: window.devicePixelRatio || 1,
+            // 默认背景色
+            backgroundColor: 0xffffff,
         });
-        cv.viewportTransform = [1, 0, 0, 1, w / 2, h / 2];
-        // console.log(cv);
-        initCenteringGuidelines(cv);
-        initAligningGuidelines(cv);
-        initCoordinateAxis(cv);
+        // 设置坐标轴原点在中心
+        app.stage.transform.position.set(app.screen.width / 2, app.screen.height / 2);
+        window.app = app;
         return {
-            cv,
-            ctx: cv.getContext()
+            pixiInstance: app,
+            cv: app.renderer.view,
+            ctx: app.renderer.context
         };
+        // const cv = new fabric.Canvas(canvas, {
+        //     width: w,
+        //     height: h
+        // });
+        // console.log({ cv }, { context: cv.getContext() });
+        // cv.viewportTransform = [1, 0, 0, 1, w / 2, h / 2];
+        // initCenteringGuidelines(cv);
+        // initAligningGuidelines(cv);
+        // initCoordinateAxis(cv);
+        // return {
+        //     cv,
+        //     ctx: cv.getContext()
+        // };
+
         // return twgl.getWebGLContext(canvas, {alpha: false, stencil: true, antialias: false});
     }
 
@@ -155,13 +181,15 @@ class RenderWebGL extends EventEmitter {
         super();
         const w = Math.abs(xLeft) + Math.abs(xRight);
         const h = Math.abs(yBottom) + Math.abs(yTop);
-        const { ctx, cv } = RenderWebGL._getContext(canvas, w, h);
+        const { pixiInstance, ctx, cv } = RenderWebGL._getContext(canvas, w, h);
         /** @type {WebGLRenderingContext} */
-        const gl = (this._gl = ctx);
+        const gl = (this._gl = ctx.gl);
         if (!gl) {
             throw new Error('Could not get WebGL context: this browser or environment may not support WebGL.');
         }
         this._canvas = cv;
+
+        this._pixiInstance = pixiInstance;
 
         /** @type {RenderWebGL.UseGpuModes} */
         this._useGpuMode = RenderWebGL.UseGpuModes.Automatic;
@@ -256,7 +284,7 @@ class RenderWebGL extends EventEmitter {
      * @returns {HTMLCanvasElement} the canvas of the WebGL rendering context associated with this renderer.
      */
     get canvas() {
-        return this._canvas; // && this._gl.canvas;
+        return this._gl && this._gl.canvas; // && this._gl.canvas;
     }
 
     /**
@@ -544,7 +572,7 @@ class RenderWebGL extends EventEmitter {
      * names
      */
     setLayerGroupOrdering(groupOrdering) {
-        console.log({groupOrdering});
+        console.log({ groupOrdering });
         this._groupOrdering = groupOrdering;
         for (let i = 0; i < this._groupOrdering.length; i++) {
             this._layerGroups[this._groupOrdering[i]] = {
@@ -697,18 +725,18 @@ class RenderWebGL extends EventEmitter {
      * Draw all current drawables and present the frame on the canvas.
      */
     draw() {
-        // this._doExitDrawRegion();
-        // const gl = this._gl;
+        this._doExitDrawRegion();
+        const gl = this._gl;
         // twgl.bindFramebufferInfo(gl, null);
-        // gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
-        // gl.clearColor(...this._backgroundColor4f);
-        // gl.clear(gl.COLOR_BUFFER_BIT);
-        // this._drawThese(this._drawList, ShaderManager.DRAW_MODE.default, this._projection);
-        // if (this._snapshotCallbacks.length > 0) {
-        //     const snapshot = gl.canvas.toDataURL();
-        //     this._snapshotCallbacks.forEach(cb => cb(snapshot));
-        //     this._snapshotCallbacks = [];
-        // }
+        gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+        gl.clearColor(...this._backgroundColor4f);
+        gl.clear(gl.COLOR_BUFFER_BIT);
+        this._drawThese(this._drawList, ShaderManager.DRAW_MODE.default, this._projection);
+        if (this._snapshotCallbacks.length > 0) {
+            const snapshot = gl.canvas.toDataURL();
+            this._snapshotCallbacks.forEach(cb => cb(snapshot));
+            this._snapshotCallbacks = [];
+        }
     }
 
     /**

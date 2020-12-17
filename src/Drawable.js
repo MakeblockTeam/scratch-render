@@ -217,16 +217,20 @@ class Drawable {
      * @param {Array.<number>} position A new position.
      */
     updatePosition(position) {
+        console.log(position);
         if (position.toString() === this._position.toString()) {
             return;
         }
         const [x, y] = position;
         const { obj, renderer } = this._skin || {};
         if (obj && renderer) {
-            // Y 轴的值是反的，故需要将 Y 轴值取反
-            obj.set('top', -y);
-            obj.set('left', x);
-            renderer._canvas.requestRenderAll();
+            try {
+                // Y 轴的值是反的，故需要将 Y 轴值取反
+                obj.y = -y
+                obj.x = x;
+            } catch (err) {
+                console.error(err);
+            }
         }
         this._position = [x, y];
     }
@@ -242,15 +246,18 @@ class Drawable {
         }
         const { obj, renderer } = this._skin || {};
         if (obj && renderer) {
-            obj.set('angle', direction - 90);
-            renderer._canvas.requestRenderAll();
+            try {
+                // 弧度设置 -> Math.PI / (180deg / xdeg)
+                obj.rotation = Math.PI / (180 / (direction - 90));
+            } catch (err) {
+                console.error(err);
+            }
         }
-        this._direction = direction;
-        // if (this._direction !== direction) {
-        //     this._direction = direction;
-        //     this._rotationTransformDirty = true;
-        //     this.setTransformDirty();
-        // }
+        if (this._direction !== direction) {
+            this._direction = direction;
+            this._rotationTransformDirty = true;
+            this.setTransformDirty();
+        }
     }
 
     /**
