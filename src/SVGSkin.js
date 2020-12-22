@@ -33,7 +33,7 @@ class SVGSkin extends Skin {
         this._largestMIPScale = 0;
 
         this._size = [0, 0];
-        this._obj = null;
+        this._spriteObj = null;
         this._visible = false;
         /**
          * Ratio of the size of the SVG and the max size of the WebGL texture
@@ -59,8 +59,8 @@ class SVGSkin extends Skin {
         return this._size;
     }
 
-    get obj() {
-        return this._obj;
+    get spriteObj() {
+        return this._spriteObj;
     }
 
     get renderer() {
@@ -69,6 +69,10 @@ class SVGSkin extends Skin {
 
     get pixiInstance() {
         return this._renderer._pixiInstance;
+    }
+
+    get vm() {
+        return this._renderer._vm;
     }
 
     useNearest(scale, drawable) {
@@ -188,7 +192,7 @@ class SVGSkin extends Skin {
     createSprite(baseTexture) {
         const texture = new PIXI.Texture(baseTexture);
         const sprite = new PIXI.Sprite.from(texture);
-        this._obj = sprite;
+        this._spriteObj = sprite;
     }
 
     /**
@@ -201,43 +205,47 @@ class SVGSkin extends Skin {
         this.resetMIPs();
         const { width = 0, height = 0 } = baseTexture;
         const that = this;
+        let isDragging = false;
+        let startPosition;
+        let newPosition;
         const onDragStart = function (event) {
-            this.data = event.data;
             this.alpha = 0.5;
-            this.dragging = true;
+            isDragging = true;
+            startPosition = this.toLocal(event.data.global);
         }
         const onDragEnd = function () {
             this.alpha = 1;
-            this.dragging = false;
+            isDragging = false;
             this.data = null;
         }
-        const onDragMove = function () {
-            if (this.dragging) {
-                const newPosition = this.data.getLocalPosition(this.parent);
-                this.x = newPosition.x;
-                this.y = newPosition.y;
+        const onDragMove = function (event) {
+            if (isDragging) {
+                newPosition = this.parent.toLocal(event.data.global);
+                this.x = newPosition.x - startPosition.x * this.scale.x;
+                this.y = newPosition.y - startPosition.y * this.scale.y;
+                that.vm.runtime.getEditingTarget().setXY(this.x, -this.y);
             }
         }
         // 设置宽度
-        this._obj.width = width;
+        this._spriteObj.width = width;
         // 设置高度
-        this._obj.height = height;
+        this._spriteObj.height = height;
         // 设置定位，默认居中
-        this._obj.position.set(0, 0);
+        this._spriteObj.position.set(0, 0);
         // 设置中心点
-        this._obj.anchor.set(0.5, 0.5);
+        this._spriteObj.anchor.set(0.5, 0.5);
         // 设置是否可见
-        this._obj.visible = this._visible;
+        this._spriteObj.visible = this._visible;
         // 设置是否支持互动
-        this._obj.interactive = true;
+        this._spriteObj.interactive = true;
         // 设置鼠标光标悬停
-        this._obj.buttonMode = true;
+        this._spriteObj.buttonMode = true;
         // 设置交互效果
-        this._obj
-            .on('pointerdown', onDragStart.bind(this._obj))
-            .on('pointerup', onDragEnd.bind(this._obj))
-            .on('pointerupoutside', onDragEnd.bind(this._obj))
-            .on('pointermove', onDragMove.bind(this._obj));
+        this._spriteObj
+            .on('pointerdown', onDragStart.bind(this._spriteObj))
+            .on('pointerup', onDragEnd.bind(this._spriteObj))
+            .on('pointerupoutside', onDragEnd.bind(this._spriteObj))
+            .on('pointermove', onDragMove.bind(this._spriteObj));
     }
 
     /**
@@ -292,15 +300,15 @@ class SVGSkin extends Skin {
     }
 
     set visible(value) {
-        if (this._obj) {
+        if (this._spriteObj) {
             this._visible = value;
-            this._obj.visible = value;
-            this.addSprite(this._obj);
+            this._spriteObj.visible = value;
+            this.addSprite(this._spriteObj);
         }
     }
     // toggleVisble(visible = false) {
-    //     if (this._obj) {
-    //         this._obj.set('visible', visible);
+    //     if (this._spriteObj) {
+    //         this._spriteObj.set('visible', visible);
     //         this._renderer._canvas.renderAll();
     //     }
     // }

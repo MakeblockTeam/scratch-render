@@ -210,12 +210,12 @@ class Drawable {
         }
         console.log(position);
         const [x, y] = position;
-        const { obj, renderer } = this._skin || {};
-        if (obj && renderer) {
+        const { spriteObj, renderer } = this._skin || {};
+        if (spriteObj && renderer) {
             try {
                 // Y 轴的值是反的，故需要将 Y 轴值取反
-                obj.y = -y
-                obj.x = x;
+                spriteObj.y = -y
+                spriteObj.x = x;
             } catch (err) {
                 console.error(err);
             }
@@ -232,11 +232,11 @@ class Drawable {
             return;
         }
         console.log({ direction });
-        const { obj, renderer } = this._skin || {};
-        if (obj && renderer) {
+        const { spriteObj, renderer } = this._skin || {};
+        if (spriteObj && renderer) {
             try {
                 // 弧度设置 -> Math.PI / (180deg / xdeg)
-                obj.rotation = Math.PI / (180 / (direction - 90));
+                spriteObj.rotation = Math.PI / (180 / (direction - 90));
             } catch (err) {
                 console.error(err);
             }
@@ -258,20 +258,12 @@ class Drawable {
         }
         console.log({ updateScale: scale });
         const [scaleX, scaleY] = scale;
-        const { obj, renderer } = this._skin || {};
-        if (obj && renderer) {
-            obj.set('scaleX', scaleX / 100);
-            obj.set('scaleY', scaleY / 100);
-            renderer._canvas.requestRenderAll();
+        const { spriteObj, renderer } = this._skin || {};
+        if (spriteObj && renderer) {
+            spriteObj.scale.x = scaleX / 100;
+            spriteObj.scale.y = scaleY / 100;
         }
         this._scale = scale;
-        // if (this._scale[0] !== scale[0] || this._scale[1] !== scale[1]) {
-        //     this._scale[0] = scale[0];
-        //     this._scale[1] = scale[1];
-        //     this._rotationCenterDirty = true;
-        //     this._skinScaleDirty = true;
-        //     this.setTransformDirty();
-        // }
     }
 
     /**
@@ -296,14 +288,14 @@ class Drawable {
     updateEffect(effectName, rawValue) {
         console.log({ updateEffect: { effectName, rawValue } });
 
-        // const { obj, renderer } = this._skin || {};
-        // if (obj && renderer) {
+        // const { spriteObj, renderer } = this._skin || {};
+        // if (spriteObj && renderer) {
         //     const filter = new Filters.Pixelate({ blocksize: rawValue });
-        //     if (!Array.isArray(obj.filters)) {
-        //         obj.filters = [];
+        //     if (!Array.isArray(spriteObj.filters)) {
+        //         spriteObj.filters = [];
         //     }
-        //     obj.filters.push(filter);
-        //     obj.applyFilters();
+        //     spriteObj.filters.push(filter);
+        //     spriteObj.applyFilters();
         //     renderer._canvas.requestRenderAll();
         // }
         // const effectInfo = ShaderManager.EFFECT_INFO[effectName];
@@ -511,6 +503,8 @@ class Drawable {
      * @param {Array<Array<number>>} points Convex hull points, as [[x, y], ...]
      */
     setConvexHullPoints(points) {
+        console.log({ points });
+        if (!points) return;
         this._convexHullPoints = points;
         this._convexHullDirty = false;
 

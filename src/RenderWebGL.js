@@ -146,8 +146,11 @@ class RenderWebGL extends EventEmitter {
      * @constructor
      * @listens RenderWebGL#event:NativeSizeChanged
      */
-    constructor(canvas, xLeft = -240, xRight = 240, yBottom = -180, yTop = 180) {
+    constructor(canvas, vm, xLeft = -240, xRight = 240, yBottom = -180, yTop = 180) {
         super();
+        if (!vm) {
+            throw new Error('vm is undefined.');
+        }
         const w = Math.abs(xLeft) + Math.abs(xRight);
         const h = Math.abs(yBottom) + Math.abs(yTop);
         const { pixiInstance, ctx, cv } = RenderWebGL._getContext(canvas, w, h);
@@ -159,6 +162,8 @@ class RenderWebGL extends EventEmitter {
         this._canvas = cv;
 
         this._pixiInstance = pixiInstance;
+
+        this._vm = vm;
 
         /** @type {RenderWebGL.UseGpuModes} */
         this._useGpuMode = RenderWebGL.UseGpuModes.Automatic;
