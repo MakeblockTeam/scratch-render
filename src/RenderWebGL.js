@@ -1,8 +1,4 @@
 const EventEmitter = require('events');
-
-// const hull = require('hull.js');
-// const twgl = require('twgl.js');
-const { fabric } = require('fabric-pure-browser');
 const PIXI = require('pixi.js-legacy');
 const BitmapSkin = require('./BitmapSkin');
 const Drawable = require('./Drawable');
@@ -13,18 +9,6 @@ const SVGSkin = require('./SVGSkin');
 const TextBubbleSkin = require('./TextBubbleSkin');
 // const EffectTransform = require('./EffectTransform');
 const log = require('./util/log');
-
-const initCenteringGuidelines = require('./lib/aligning_guidelines');
-const initAligningGuidelines = require('./lib/centering_guidelines');
-const initCoordinateAxis = require('./lib/coordinate-axis');
-
-// const getPointer = fabric.Canvas.prototype.getPointer;
-// fabric.Canvas.prototype.getPointer = function (...args) {
-//     console.log([args, this]);
-//     getPointer.call(fabric, ...args);
-// };
-
-// 但取代pointer.y = pointer.y - this._offset.top带着pointer.y = bounds.height - pointer.y + this._offset.top
 
 const __isTouchingDrawablesPoint = [0, 0];
 const __candidatesBounds = new Rectangle();
@@ -144,21 +128,6 @@ class RenderWebGL extends EventEmitter {
             cv: app.renderer.view,
             ctx: app.renderer.context
         };
-        // const cv = new fabric.Canvas(canvas, {
-        //     width: w,
-        //     height: h
-        // });
-        // console.log({ cv }, { context: cv.getContext() });
-        // cv.viewportTransform = [1, 0, 0, 1, w / 2, h / 2];
-        // initCenteringGuidelines(cv);
-        // initAligningGuidelines(cv);
-        // initCoordinateAxis(cv);
-        // return {
-        //     cv,
-        //     ctx: cv.getContext()
-        // };
-
-        // return twgl.getWebGLContext(canvas, {alpha: false, stencil: true, antialias: false});
     }
 
     /**
@@ -408,36 +377,11 @@ class RenderWebGL extends EventEmitter {
      */
     createSVGSkin(svgData, rotationCenter) {
         const skinId = this._nextSkinId++;
+        console.log({ aaaaa: this });
         const newSkin = new SVGSkin(skinId, this);
         newSkin.setSVG(svgData, rotationCenter);
         this._allSkins[skinId] = newSkin;
         return skinId;
-        // fabric.loadSVGFromString(svgData, (objects, opts) => {
-        //     // const {width, height} = opts;
-        //     // const scale = width / height;
-        //     // const MAX_SIZE = 120;
-        //     // if (scale > 1) {
-        //     //     opts.height = height * MAX_SIZE / width;
-        //     //     opts.width = MAX_SIZE;
-        //     // } else {
-        //     //     opts.width = width * MAX_SIZE / height;
-        //     //     opts.height = MAX_SIZE;
-        //     // }
-        //     // opts.viewBoxWidth = opts.width;
-        //     // opts.viewBoxHeight = opts.height;
-        //     const options = {
-        //         ...opts,
-        //         top: 0,
-        //         left: 0,
-        //         originX: 'center',
-        //         originY: 'center'
-        //     };
-        //     const obj = new fabric.Group(objects, options);
-        //     // this._canvas.add(obj).renderAll();
-        //     // this._allSkins[skinId] = obj;
-        //     console.log([objects, opts, obj]);
-        // });
-        // return skinId;
     }
 
     /**
@@ -1159,53 +1103,53 @@ class RenderWebGL extends EventEmitter {
      */
     pick(centerX, centerY, touchWidth, touchHeight, candidateIDs) {
         // fabric
-        // const bounds = this.clientSpaceToScratchBounds(centerX, centerY, touchWidth, touchHeight);
-        // if (bounds.left === -Infinity || bounds.bottom === -Infinity) {
-        //     return false;
-        // }
-        // candidateIDs = (candidateIDs || this._drawList).filter(id => {
-        //     const drawable = this._allDrawables[id];
-        //     // default pick list ignores visible and ghosted sprites.
-        //     if (drawable.getVisible() && drawable.getUniforms().u_ghost !== 0) {
-        //         const drawableBounds = drawable.getFastBounds();
-        //         const inRange = bounds.intersects(drawableBounds);
-        //         if (!inRange) return false;
-        //         drawable.updateCPURenderAttributes();
-        //         return true;
-        //     }
-        //     return false;
-        // });
-        // if (candidateIDs.length === 0) {
-        //     return false;
-        // }
-        // const hits = [];
-        // const worldPos = twgl.v3.create(0, 0, 0);
-        // // Iterate over the scratch pixels and check if any candidate can be
-        // // touched at that point.
-        // for (worldPos[1] = bounds.bottom; worldPos[1] <= bounds.top; worldPos[1]++) {
-        //     for (worldPos[0] = bounds.left; worldPos[0] <= bounds.right; worldPos[0]++) {
-        //         // Check candidates in the reverse order they would have been
-        //         // drawn. This will determine what candiate's silhouette pixel
-        //         // would have been drawn at the point.
-        //         for (let d = candidateIDs.length - 1; d >= 0; d--) {
-        //             const id = candidateIDs[d];
-        //             const drawable = this._allDrawables[id];
-        //             if (drawable.isTouching(worldPos)) {
-        //                 hits[id] = (hits[id] || 0) + 1;
-        //                 break;
-        //             }
-        //         }
-        //     }
-        // }
-        // // Bias toward selecting anything over nothing
-        // hits[RenderConstants.ID_NONE] = 0;
-        // let hit = RenderConstants.ID_NONE;
-        // for (const hitID in hits) {
-        //     if (Object.prototype.hasOwnProperty.call(hits, hitID) && (hits[hitID] > hits[hit])) {
-        //         hit = hitID;
-        //     }
-        // }
-        // return Number(hit);
+        const bounds = this.clientSpaceToScratchBounds(centerX, centerY, touchWidth, touchHeight);
+        if (bounds.left === -Infinity || bounds.bottom === -Infinity) {
+            return false;
+        }
+        candidateIDs = (candidateIDs || this._drawList).filter(id => {
+            const drawable = this._allDrawables[id];
+            // default pick list ignores visible and ghosted sprites.
+            if (drawable.getVisible() && drawable.getUniforms().u_ghost !== 0) {
+                const drawableBounds = drawable.getFastBounds();
+                const inRange = bounds.intersects(drawableBounds);
+                if (!inRange) return false;
+                drawable.updateCPURenderAttributes();
+                return true;
+            }
+            return false;
+        });
+        if (candidateIDs.length === 0) {
+            return false;
+        }
+        const hits = [];
+        const worldPos = twgl.v3.create(0, 0, 0);
+        // Iterate over the scratch pixels and check if any candidate can be
+        // touched at that point.
+        for (worldPos[1] = bounds.bottom; worldPos[1] <= bounds.top; worldPos[1]++) {
+            for (worldPos[0] = bounds.left; worldPos[0] <= bounds.right; worldPos[0]++) {
+                // Check candidates in the reverse order they would have been
+                // drawn. This will determine what candiate's silhouette pixel
+                // would have been drawn at the point.
+                for (let d = candidateIDs.length - 1; d >= 0; d--) {
+                    const id = candidateIDs[d];
+                    const drawable = this._allDrawables[id];
+                    if (drawable.isTouching(worldPos)) {
+                        hits[id] = (hits[id] || 0) + 1;
+                        break;
+                    }
+                }
+            }
+        }
+        // Bias toward selecting anything over nothing
+        hits[RenderConstants.ID_NONE] = 0;
+        let hit = RenderConstants.ID_NONE;
+        for (const hitID in hits) {
+            if (Object.prototype.hasOwnProperty.call(hits, hitID) && (hits[hitID] > hits[hit])) {
+                hit = hitID;
+            }
+        }
+        return Number(hit);
     }
 
     /**
@@ -1704,20 +1648,8 @@ class RenderWebGL extends EventEmitter {
      * @param {number} y - the Y coordinate of the point to draw.
      */
     penPoint(penSkinID, penAttributes, x, y) {
-        // const skin = /** @type {PenSkin} */ this._allSkins[penSkinID];
-        const { diameter, color4f } = penAttributes;
-        const [r, g, b, a] = color4f;
-        const fill = `rgba(${r}, ${g}, ${b}, ${a})`;
-        // fabric.util
-        const circle = new fabric.Circle({
-            radius: diameter,
-            fill,
-            left: x,
-            top: y,
-            originX: 'center',
-            originY: 'center'
-        });
-        this._canvas.add(circle);
+        const skin = /** @type {PenSkin} */ this._allSkins[penSkinID];
+        skin.drawPoint(penAttributes, x, y);
     }
 
     /**
@@ -1730,46 +1662,8 @@ class RenderWebGL extends EventEmitter {
      * @param {number} y1 - the Y coordinate of the end of the line.
      */
     penLine(penSkinID, penAttributes, x0, y0, x1, y1) {
-        // const skin = /** @type {PenSkin} */ this._allSkins[penSkinID];
-        // skin.drawLine(penAttributes, x0, y0, x1, y1);
-        const { diameter, color4f } = penAttributes;
-        const [r, g, b, a] = color4f;
-        const fill = `rgba(${r}, ${g}, ${b}, ${a})`;
-        const attrs = {
-            strokeWidth: diameter,
-            stroke: fill,
-            // left: 0,
-            // top: 0,
-            // originX: 'center',
-            // originY: 'center',
-            fill
-        };
-        const points = [x0, y0, x1, y1];
-        if (window.devicePixelRatio > 1) {
-            attrs.originX = 'center';
-            attrs.originY = 'center';
-        }
-        console.log(points);
-        const line = new fabric.Line(points, attrs);
-        this._canvas.add(line);
-        // line.animate({x2: x1, y2: y1}, {
-        //     duration: 4000
-        // });
-        const doAnimate = (duration = 1000) => {
-            line.x2 = line.x1;
-            line.y2 = line.y1;
-            line.animate(
-                { x2: x1, y2: y1 },
-                {
-                    onChange: this._canvas.renderAll.bind(this._canvas),
-                    onComplete: () => {
-                        line.setCoords();
-                    },
-                    duration
-                }
-            );
-        };
-        return doAnimate;
+        const skin = /** @type {PenSkin} */ this._allSkins[penSkinID];
+        skin.drawLine(penAttributes, x0, y0, x1, y1);
     }
 
     /**

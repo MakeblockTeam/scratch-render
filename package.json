@@ -15,7 +15,7 @@
     "build": "webpack --progress --colors",
     "docs": "jsdoc -c .jsdoc.json",
     "lint": "eslint .",
-    "prepublish": "",
+    "prepublish": "npm run build",
     "prepublish-watch": "npm run watch",
     "start": "webpack-dev-server",
     "tap": "tap test/unit test/integration",

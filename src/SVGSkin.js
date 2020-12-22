@@ -1,8 +1,5 @@
-const twgl = require('twgl.js');
-const { fabric } = require('fabric-pure-browser');
 const PIXI = require('pixi.js-legacy');
 const Skin = require('./Skin');
-const SvgRenderer = require('scratch-svg-renderer').SVGRenderer;
 const ShaderManager = require('./ShaderManager');
 
 const MAX_TEXTURE_DIMENSION = 2048;
@@ -28,9 +25,6 @@ class SVGSkin extends Skin {
 
         /** @type {RenderWebGL} */
         this._renderer = renderer;
-
-        /** @type {SvgRenderer} */
-        // this._svgRenderer = new SvgRenderer();
 
         /** @type {Array<WebGLTexture>} */
         this._scaledMIPs = [];
@@ -206,6 +200,7 @@ class SVGSkin extends Skin {
     initSprite(baseTexture) {
         this.resetMIPs();
         const { width = 0, height = 0 } = baseTexture;
+        const that = this;
         const onDragStart = function (event) {
             this.data = event.data;
             this.alpha = 0.5;
@@ -272,48 +267,6 @@ class SVGSkin extends Skin {
             });
         }
         this.emit(Skin.Events.WasAltered);
-
-        // can be loaded from cache
-        // if (baseTexture.hasLoaded) {
-        // } else {
-        //     baseTexture.on('loaded', () => {
-        //         this.createSprite(baseTexture);
-        //     });
-        // }
-        // const sprite = PIXI.Sprite.from(svgData);
-        // sprite.interactive = true;
-        // this._obj = sprite;
-
-        // fabric.loadSVGFromString(svgData, (objects, opts) => {
-        //     if (objects.length === 0) {
-        //         return;
-        //     }
-        //     const { width = 0, height = 0 } = opts;
-        //     this._size = [width, height];
-        //     // const scale = width / height;
-        //     // const MAX_SIZE = 120;
-        //     // if (scale > 1) {
-        //     //     opts.height = height * MAX_SIZE / width;
-        //     //     opts.width = MAX_SIZE;
-        //     // } else {
-        //     //     opts.width = width * MAX_SIZE / height;
-        //     //     opts.height = MAX_SIZE;
-        //     // }
-        //     // opts.viewBoxWidth = opts.width;
-        //     // opts.viewBoxHeight = opts.height;
-        //     const options = {
-        //         ...opts,
-        //         top: 0,
-        //         left: 0,
-        //         originX: 'center',
-        //         originY: 'center',
-        //         visible: this._visible
-        //     };
-        //     const obj = new fabric.Group(objects, options);
-        //     this._renderer._canvas.add(obj);
-        //     this._obj = obj;
-        //     this.emit(Skin.Events.WasAltered);
-        // });
         // this._svgRenderer.loadSVG(svgData, false, () => {
         //     const svgSize = this._svgRenderer.size;
         //     if (svgSize[0] === 0 || svgSize[1] === 0) {
