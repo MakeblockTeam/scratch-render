@@ -193,6 +193,8 @@ class SVGSkin extends Skin {
         const texture = new PIXI.Texture(baseTexture);
         const sprite = new PIXI.Sprite.from(texture);
         this._spriteObj = sprite;
+        // 设置新添加角色的 zIndex，不能放在 initSprite，存在异步问题
+        this._spriteObj.zIndex = this._id;
     }
 
     /**
@@ -214,8 +216,6 @@ class SVGSkin extends Skin {
         this.spriteObj.anchor.set(0.5, 0.5);
         // 设置是否可见
         this.spriteObj.visible = this._visible;
-        // 设置新添加角色的 zIndex
-        this.spriteObj.zIndex = this._id;
     }
 
     /**

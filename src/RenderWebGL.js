@@ -1508,6 +1508,7 @@ class RenderWebGL extends EventEmitter {
      * @param {number} skinId The skin to update to.
      */
     updateDrawableSkinId(drawableID, skinId) {
+        console.log({ updateDrawableSkinId: `${drawableID},${skinId}` });
         const drawable = this._allDrawables[drawableID];
         // TODO: https://github.com/LLK/scratch-vm/issues/2288
         if (!drawable) return;

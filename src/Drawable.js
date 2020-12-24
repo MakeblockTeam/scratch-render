@@ -180,9 +180,7 @@ class Drawable {
             this.updateNewSkinBaseInfo(newSkin);
         }
         this._skin = newSkin;
-        if (this._group === STAGE_LAYER_GROUPS.SPRITE_LAYER) {
-            this.setSkinDragInteractive(this._skin);
-        }
+        this.setSkinDragInteractive(this._skin);
     }
 
     /**
@@ -208,7 +206,7 @@ class Drawable {
      * @memberof Drawable
      */
     setSkinDragInteractive(skin) {
-        if (!skin) return;
+        if (!skin || this._group !== STAGE_LAYER_GROUPS.SPRITE_LAYER) return;
         const { spriteObj } = skin;
         const defaultDrawable = this;
         let isDragging = false;
@@ -261,6 +259,10 @@ class Drawable {
      */
     updateNewSkinBaseInfo(newSkin) {
         const { spriteObj } = newSkin;
+        // 若为背景层，层级应为最低，设置为 -Infinity
+        if (this._group === STAGE_LAYER_GROUPS.BACKGROUND_LAYER) {
+            spriteObj.zIndex = -Infinity;
+        }
         const [x, y] = this._position;
         if (x !== spriteObj.x) {
             spriteObj.x = x;
