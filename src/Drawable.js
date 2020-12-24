@@ -63,9 +63,11 @@ class Drawable {
      * @param {!int} id - This Drawable's unique ID.
      * @constructor
      */
-    constructor(id) {
+    constructor(id, renderer) {
         /** @type {!int} */
         this._id = id;
+
+        this._renderer = renderer;
 
         /**
          * The uniforms to be used by the vertex and pixel shaders.
@@ -172,8 +174,10 @@ class Drawable {
         }
         if (newSkin) {
             newSkin.visible = true;
+            this.updateNewSkinBaseInfo(newSkin);
         }
         this._skin = newSkin;
+        this.setSkinDragInteractive(this._skin);
     }
 
     /**
@@ -181,6 +185,86 @@ class Drawable {
      */
     get scale() {
         return [this._scale[0], this._scale[1]];
+    }
+
+    get vm() {
+        return this._renderer._vm;
+    }
+
+    /**
+     * 设置角色交互事件
+     *
+     * @param {*} skin
+     * @returns
+     * @memberof Drawable
+     */
+    setSkinDragInteractive(skin) {
+        if (!skin) return;
+        const { spriteObj } = skin;
+        const defaultDrawable = this;
+        let isDragging = false;
+        let startPosition;
+        let newPosition;
+        const onDragStart = function (event) {
+            this.alpha = 0.5;
+            isDragging = true;
+            startPosition = this.toLocal(event.data.global);
+            if (!defaultDrawable.id) return;
+            const targetId = defaultDrawable.vm.getTargetIdForDrawableId(defaultDrawable.id);
+            if (!targetId) return;
+            const target = defaultDrawable.vm.runtime.getTargetById(targetId);
+            const editingTarget = defaultDrawable.vm.runtime.getEditingTarget();
+            if (target.id === editingTarget.id) return;
+            defaultDrawable.vm.setEditingTarget(target.id);
+        }
+        const onDragEnd = function () {
+            this.alpha = 1;
+            isDragging = false;
+            this.data = null;
+        }
+        const onDragMove = function (event) {
+            if (isDragging) {
+                newPosition = this.parent.toLocal(event.data.global);
+                this.x = newPosition.x - startPosition.x * this.scale.x;
+                this.y = newPosition.y - startPosition.y * this.scale.y;
+                defaultDrawable.vm.runtime.getEditingTarget().setXY(this.x, -this.y);
+            }
+        }
+        spriteObj
+            .on('pointerdown', onDragStart.bind(spriteObj))
+            .on('pointerup', onDragEnd.bind(spriteObj))
+            .on('pointerupoutside', onDragEnd.bind(spriteObj))
+            .on('pointermove', onDragMove.bind(spriteObj));
+    }
+
+    /**
+     * 更新下一个精灵图基本信息，如 position、scale etc.
+     *
+     * @param {*} newSkin
+     * @memberof Drawable
+     */
+    updateNewSkinBaseInfo(newSkin) {
+        const { spriteObj } = newSkin;
+        const [x, y] = this._position;
+        if (x !== spriteObj.x) {
+            spriteObj.x = x;
+        }
+        if (y !== spriteObj.y) {
+            spriteObj.y = -y;
+        }
+        const [scaleX, scaleY] = this._scale;
+        const newScaleX = scaleX / 100;
+        if (newScaleX !== spriteObj.scale.x) {
+            spriteObj.scale.x = newScaleX;
+        }
+        const newScaleY = scaleY / 100;
+        if (newScaleY !== spriteObj.scale.y) {
+            spriteObj.scale.y = newScaleY;
+        }
+        const newRotation = Math.PI / (180 / (this._direction - 90));
+        if (newRotation !== spriteObj.rotation) {
+            spriteObj.rotation = newRotation;
+        }
     }
 
     /**
@@ -208,7 +292,7 @@ class Drawable {
         if (position.toString() === this._position.toString()) {
             return;
         }
-        console.log(position);
+        console.log({updatePosition: position });
         const [x, y] = position;
         const { spriteObj, renderer } = this._skin || {};
         if (spriteObj && renderer) {
@@ -231,7 +315,7 @@ class Drawable {
         if (direction === this._direction) {
             return;
         }
-        console.log({ direction });
+        console.log({ updateDirection: direction });
         const { spriteObj, renderer } = this._skin || {};
         if (spriteObj && renderer) {
             try {

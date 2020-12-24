@@ -506,7 +506,7 @@ class RenderWebGL extends EventEmitter {
             return;
         }
         const drawableID = this._nextDrawableId++;
-        const drawable = new Drawable(drawableID);
+        const drawable = new Drawable(drawableID, this);
         this._allDrawables[drawableID] = drawable;
         this._addToDrawList(drawableID, group);
 

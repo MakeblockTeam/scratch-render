@@ -204,28 +204,6 @@ class SVGSkin extends Skin {
     initSprite(baseTexture) {
         this.resetMIPs();
         const { width = 0, height = 0 } = baseTexture;
-        const that = this;
-        let isDragging = false;
-        let startPosition;
-        let newPosition;
-        const onDragStart = function (event) {
-            this.alpha = 0.5;
-            isDragging = true;
-            startPosition = this.toLocal(event.data.global);
-        }
-        const onDragEnd = function () {
-            this.alpha = 1;
-            isDragging = false;
-            this.data = null;
-        }
-        const onDragMove = function (event) {
-            if (isDragging) {
-                newPosition = this.parent.toLocal(event.data.global);
-                this.x = newPosition.x - startPosition.x * this.scale.x;
-                this.y = newPosition.y - startPosition.y * this.scale.y;
-                that.vm.runtime.getEditingTarget().setXY(this.x, -this.y);
-            }
-        }
         // 设置宽度
         this._spriteObj.width = width;
         // 设置高度
@@ -240,12 +218,8 @@ class SVGSkin extends Skin {
         this._spriteObj.interactive = true;
         // 设置鼠标光标悬停
         this._spriteObj.buttonMode = true;
-        // 设置交互效果
-        this._spriteObj
-            .on('pointerdown', onDragStart.bind(this._spriteObj))
-            .on('pointerup', onDragEnd.bind(this._spriteObj))
-            .on('pointerupoutside', onDragEnd.bind(this._spriteObj))
-            .on('pointermove', onDragMove.bind(this._spriteObj));
+        // 设置 cursor
+        this._spriteObj.cursor = 'move';
     }
 
     /**
@@ -274,25 +248,6 @@ class SVGSkin extends Skin {
                 this.initSprite(baseTexture);
             });
         }
-        this.emit(Skin.Events.WasAltered);
-        // this._svgRenderer.loadSVG(svgData, false, () => {
-        //     const svgSize = this._svgRenderer.size;
-        //     if (svgSize[0] === 0 || svgSize[1] === 0) {
-        //         super.setEmptyImageData();
-        //         return;
-        //     }
-        //     const maxDimension = Math.ceil(Math.max(this.size[0], this.size[1]));
-        //     let testScale = 2;
-        //     for (testScale; maxDimension * testScale <= MAX_TEXTURE_DIMENSION; testScale *= 2) {
-        //         this._maxTextureScale = testScale;
-        //     }
-        //     this.resetMIPs();
-        //     if (typeof rotationCenter === 'undefined') rotationCenter = this.calculateRotationCenter();
-        //     const viewOffset = this._svgRenderer.viewOffset;
-        //     this._rotationCenter[0] = rotationCenter[0] - viewOffset[0];
-        //     this._rotationCenter[1] = rotationCenter[1] - viewOffset[1];
-        //     this.emit(Skin.Events.WasAltered);
-        // });
     }
 
     get visible() {
