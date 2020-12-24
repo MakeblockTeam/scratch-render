@@ -5,6 +5,7 @@ const ShaderManager = require('./ShaderManager');
 const Skin = require('./Skin');
 const EffectTransform = require('./EffectTransform');
 const log = require('./util/log');
+const { STAGE_LAYER_GROUPS } = require('./enum');
 
 /**
  * An internal workspace for calculating texture locations from world vectors
@@ -63,9 +64,11 @@ class Drawable {
      * @param {!int} id - This Drawable's unique ID.
      * @constructor
      */
-    constructor(id, renderer) {
+    constructor(id, group, renderer) {
         /** @type {!int} */
         this._id = id;
+
+        this._group = group;
 
         this._renderer = renderer;
 
@@ -177,7 +180,9 @@ class Drawable {
             this.updateNewSkinBaseInfo(newSkin);
         }
         this._skin = newSkin;
-        this.setSkinDragInteractive(this._skin);
+        if (this._group === STAGE_LAYER_GROUPS.SPRITE_LAYER) {
+            this.setSkinDragInteractive(this._skin);
+        }
     }
 
     /**
@@ -189,6 +194,10 @@ class Drawable {
 
     get vm() {
         return this._renderer._vm;
+    }
+
+    get pixiInstance() {
+        return this._renderer._pixiInstance;
     }
 
     /**
@@ -230,6 +239,13 @@ class Drawable {
                 defaultDrawable.vm.runtime.getEditingTarget().setXY(this.x, -this.y);
             }
         }
+        // 设置是否支持互动
+        spriteObj.interactive = true;
+        // 设置鼠标光标悬停
+        spriteObj.buttonMode = true;
+        // 设置 cursor
+        spriteObj.cursor = 'move';
+        // 绑定事件
         spriteObj
             .on('pointerdown', onDragStart.bind(spriteObj))
             .on('pointerup', onDragEnd.bind(spriteObj))
@@ -292,7 +308,7 @@ class Drawable {
         if (position.toString() === this._position.toString()) {
             return;
         }
-        console.log({updatePosition: position });
+        console.log({ updatePosition: position });
         const [x, y] = position;
         const { spriteObj, renderer } = this._skin || {};
         if (spriteObj && renderer) {

@@ -122,6 +122,7 @@ class RenderWebGL extends EventEmitter {
         });
         // 设置坐标轴原点在中心
         app.stage.transform.position.set(app.screen.width / 2, app.screen.height / 2);
+        app.stage.sortableChildren = true;
         window.app = app;
         return {
             pixiInstance: app,
@@ -381,8 +382,8 @@ class RenderWebGL extends EventEmitter {
      * @returns {!int} the ID for the new skin.
      */
     createSVGSkin(svgData, rotationCenter) {
+        console.log({ createSVGSkin: svgData });
         const skinId = this._nextSkinId++;
-        console.log({ aaaaa: this });
         const newSkin = new SVGSkin(skinId, this);
         newSkin.setSVG(svgData, rotationCenter);
         this._allSkins[skinId] = newSkin;
@@ -501,12 +502,13 @@ class RenderWebGL extends EventEmitter {
      * @returns {int} The ID of the new Drawable.
      */
     createDrawable(group) {
+        console.log({ createDrawable: group });
         if (!group || !Object.prototype.hasOwnProperty.call(this._layerGroups, group)) {
             log.warn('Cannot create a drawable without a known layer group');
             return;
         }
         const drawableID = this._nextDrawableId++;
-        const drawable = new Drawable(drawableID, this);
+        const drawable = new Drawable(drawableID, group, this);
         this._allDrawables[drawableID] = drawable;
         this._addToDrawList(drawableID, group);
 
@@ -664,6 +666,16 @@ class RenderWebGL extends EventEmitter {
 
             // Insert at new index.
             this._drawList.splice(newIndex, 0, drawableID);
+
+            // 重新设置 zIndex
+            for (let i = 0; i < this._drawList.length; i += 1) {
+                const draw = this._drawList[i];
+                const drawable = this._allDrawables[draw];
+                const { spriteObj } = drawable._skin;
+                spriteObj.zIndex = i;
+            }
+            // 更新角色排序
+            this._pixiInstance.stage.sortChildren();
             return newIndex;
         }
 

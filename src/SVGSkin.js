@@ -23,6 +23,8 @@ class SVGSkin extends Skin {
     constructor(id, renderer) {
         super(id);
 
+        this._id = id;
+
         /** @type {RenderWebGL} */
         this._renderer = renderer;
 
@@ -40,8 +42,6 @@ class SVGSkin extends Skin {
          * @type {Number}
          */
         this._maxTextureScale = 1;
-
-        this._pixiLoader = new PIXI.Loader();
     }
 
     /**
@@ -205,21 +205,17 @@ class SVGSkin extends Skin {
         this.resetMIPs();
         const { width = 0, height = 0 } = baseTexture;
         // 设置宽度
-        this._spriteObj.width = width;
+        this.spriteObj.width = width;
         // 设置高度
-        this._spriteObj.height = height;
+        this.spriteObj.height = height;
         // 设置定位，默认居中
-        this._spriteObj.position.set(0, 0);
+        this.spriteObj.position.set(0, 0);
         // 设置中心点
-        this._spriteObj.anchor.set(0.5, 0.5);
+        this.spriteObj.anchor.set(0.5, 0.5);
         // 设置是否可见
-        this._spriteObj.visible = this._visible;
-        // 设置是否支持互动
-        this._spriteObj.interactive = true;
-        // 设置鼠标光标悬停
-        this._spriteObj.buttonMode = true;
-        // 设置 cursor
-        this._spriteObj.cursor = 'move';
+        this.spriteObj.visible = this._visible;
+        // 设置新添加角色的 zIndex
+        this.spriteObj.zIndex = this._id;
     }
 
     /**
@@ -229,7 +225,10 @@ class SVGSkin extends Skin {
      * @memberof SVGSkin
      */
     addSprite(sprite) {
+        // 舞台渲染角色
         this.pixiInstance.stage.addChild(sprite);
+        // 更新角色排序
+        this.pixiInstance.stage.sortChildren();
     }
 
     /**
@@ -255,18 +254,12 @@ class SVGSkin extends Skin {
     }
 
     set visible(value) {
-        if (this._spriteObj) {
+        if (this.spriteObj) {
             this._visible = value;
-            this._spriteObj.visible = value;
-            this.addSprite(this._spriteObj);
+            this.spriteObj.visible = value;
+            this.addSprite(this.spriteObj);
         }
     }
-    // toggleVisble(visible = false) {
-    //     if (this._spriteObj) {
-    //         this._spriteObj.set('visible', visible);
-    //         this._renderer._canvas.renderAll();
-    //     }
-    // }
 }
 
 module.exports = SVGSkin;

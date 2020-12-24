@@ -6018,11 +6018,6 @@ pinkie@^2.0.0:
   resolved "https://registry.yarnpkg.com/pinkie/-/pinkie-2.0.4.tgz#72556b80cfa0d48a974e80e77248e80ed4f7f870"
   integrity sha1-clVrgM+g1IqXToDnckjoDtT3+HA=
 
-pixi-layers@^0.3.0:
-  version "0.3.0"
-  resolved "http://npm.makeblock.com/pixi-layers/-/pixi-layers-0.3.0.tgz#e2fbdad84b0175e945841db84e4b5ec7e6881418"
-  integrity sha1-4vva2EsBdelFhB24Tktex+aIFBg=
-
 pixi.js-legacy@^5.3.3:
   version "5.3.6"
   resolved "http://npm.makeblock.com/pixi.js-legacy/-/pixi.js-legacy-5.3.6.tgz#0876a862c31d7b076fd3875fa2bacba00c3f51a1"
