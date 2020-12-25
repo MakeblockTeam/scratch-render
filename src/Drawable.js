@@ -102,7 +102,7 @@ class Drawable {
         }
 
         this._position = twgl.v3.create(0, 0);
-        this._scale = twgl.v3.create(100, 100);
+        this._scale = [100, 100];
         this._direction = 90;
         this._transformDirty = true;
         this._rotationMatrix = twgl.m4.identity();
@@ -245,10 +245,14 @@ class Drawable {
         spriteObj.cursor = 'move';
         // 绑定事件
         spriteObj
-            .on('pointerdown', onDragStart.bind(spriteObj))
-            .on('pointerup', onDragEnd.bind(spriteObj))
-            .on('pointerupoutside', onDragEnd.bind(spriteObj))
-            .on('pointermove', onDragMove.bind(spriteObj));
+            .on('mousedown', onDragStart.bind(spriteObj))
+            .on('mouseup', onDragEnd.bind(spriteObj))
+            .on('mouseupoutside', onDragEnd.bind(spriteObj))
+            .on('mousemove', onDragMove.bind(spriteObj))
+            .on('touchstart', onDragStart.bind(spriteObj))
+            .on('touchend', onDragEnd.bind(spriteObj))
+            .on('touchendoutside', onDragEnd.bind(spriteObj))
+            .on('touchmove', onDragMove.bind(spriteObj));
     }
 
     /**

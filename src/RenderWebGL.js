@@ -708,29 +708,21 @@ class RenderWebGL extends EventEmitter {
      */
     getBounds(drawableID) {
         const drawable = this._allDrawables[drawableID];
-        // Tell the Drawable about its updated convex hull, if necessary.
-        if (drawable.needsConvexHullPoints()) {
-            const points = this._getConvexHullPointsForDrawable(drawableID);
-            drawable.setConvexHullPoints(points);
+        const { spriteObj } = drawable.skin;
+        const bounds = spriteObj.getBounds();
+        console.log({ bounds });
+        const { x, y, left, top, right, bottom, width, height } = bounds;
+        const cloneBounds = {
+            x,
+            y,
+            width,
+            height,
+            top,
+            right,
+            bottom,
+            left,
         }
-        const bounds = drawable.getFastBounds();
-        // In debug mode, draw the bounds.
-        if (this._debugCanvas) {
-            const gl = this._gl;
-            this._debugCanvas.width = gl.canvas.width;
-            this._debugCanvas.height = gl.canvas.height;
-            const context = this._debugCanvas.getContext('2d');
-            context.drawImage(gl.canvas, 0, 0);
-            context.strokeStyle = '#FF0000';
-            const pr = window.devicePixelRatio;
-            context.strokeRect(
-                pr * (bounds.left + this._nativeSize[0] / 2),
-                pr * (-bounds.top + this._nativeSize[1] / 2),
-                pr * (bounds.right - bounds.left),
-                pr * (-bounds.bottom + bounds.top)
-            );
-        }
-        return bounds;
+        return cloneBounds;
     }
 
     /**
@@ -747,22 +739,6 @@ class RenderWebGL extends EventEmitter {
             drawable.setConvexHullPoints(points);
         }
         const bounds = drawable.getBoundsForBubble();
-        // In debug mode, draw the bounds.
-        if (this._debugCanvas) {
-            const gl = this._gl;
-            this._debugCanvas.width = gl.canvas.width;
-            this._debugCanvas.height = gl.canvas.height;
-            const context = this._debugCanvas.getContext('2d');
-            context.drawImage(gl.canvas, 0, 0);
-            context.strokeStyle = '#FF0000';
-            const pr = window.devicePixelRatio;
-            context.strokeRect(
-                pr * (bounds.left + this._nativeSize[0] / 2),
-                pr * (-bounds.top + this._nativeSize[1] / 2),
-                pr * (bounds.right - bounds.left),
-                pr * (-bounds.bottom + bounds.top)
-            );
-        }
         return bounds;
     }
 
@@ -1934,8 +1910,8 @@ class RenderWebGL extends EventEmitter {
         // // This is functionally equivalent to pushing and popping from a "stack" of hull points.
         // let leftEndPointIndex = -1;
         // let rightEndPointIndex = -1;
-        // const _pixelPos = twgl.v3.create();
-        // const _effectPos = twgl.v3.create();
+        // const _pixelPos = new Float32Array(3);
+        // const _effectPos = new Float32Array(3);
         // let currentPoint;
         // // *Not* Scratch Space-- +y is bottom
         // // Loop over all rows of pixels, starting at the top

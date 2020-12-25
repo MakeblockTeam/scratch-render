@@ -1,6 +1,7 @@
 const PIXI = require('pixi.js-legacy');
 const Skin = require('./Skin');
 const ShaderManager = require('./ShaderManager');
+const fixupSvgString = require('./util/fixup-svg-string');
 
 const MAX_TEXTURE_DIMENSION = 2048;
 
@@ -33,8 +34,8 @@ class SVGSkin extends Skin {
 
         /** @type {number} */
         this._largestMIPScale = 0;
-
-        this._size = [0, 0];
+        this._svgDom = null;
+        this._svgTag = null;
         this._svgBaseTexture = null;
         this._texture = null;
         this._spriteObj = null;
@@ -58,7 +59,7 @@ class SVGSkin extends Skin {
      * @return {Array<number>} the natural size, in Scratch units, of this skin.
      */
     get size() {
-        return this._size;
+        return [this._svgBaseTexture.width, this._svgBaseTexture.height];
     }
 
     get spriteObj() {
@@ -203,6 +204,7 @@ class SVGSkin extends Skin {
                 this.initSprite(svgInfo);
             });
         }
+        this.pixiInstance.stage.addChild(sprite);
     }
 
     /**
@@ -226,17 +228,69 @@ class SVGSkin extends Skin {
         this._spriteObj.visible = this._visible;
     }
 
-    /**
-     * 渲染精灵图至舞台
-     *
-     * @param {*} sprite
-     * @memberof SVGSkin
-     */
-    addSprite(sprite) {
-        // 舞台渲染角色
-        this.pixiInstance.stage.addChild(sprite);
-        // 更新角色排序
-        this.pixiInstance.stage.sortChildren();
+    _findLargestStrokeWidth(rootNode) {
+        let largestStrokeWidth = 0;
+        const collectStrokeWidths = domElement => {
+            if (domElement.getAttribute) {
+                if (domElement.getAttribute('stroke')) {
+                    largestStrokeWidth = Math.max(largestStrokeWidth, 1);
+                }
+                if (domElement.getAttribute('stroke-width')) {
+                    largestStrokeWidth = Math.max(
+                        largestStrokeWidth,
+                        Number(domElement.getAttribute('stroke-width')) || 0
+                    );
+                }
+            }
+            for (let i = 0; i < domElement.childNodes.length; i++) {
+                collectStrokeWidths(domElement.childNodes[i]);
+            }
+        };
+        collectStrokeWidths(rootNode);
+        return largestStrokeWidth;
+    }
+
+    _transformMeasurements() {
+        const svgSpot = document.createElement('span');
+        const tempTag = this._svgTag.cloneNode(/* deep */ true);
+        let bbox;
+        try {
+            svgSpot.appendChild(tempTag);
+            document.body.appendChild(svgSpot);
+            bbox = tempTag.getBBox();
+        } finally {
+            document.body.removeChild(svgSpot);
+            svgSpot.removeChild(tempTag);
+        }
+        let halfStrokeWidth;
+        if (bbox.width === 0 || bbox.height === 0) {
+            halfStrokeWidth = 0;
+        } else {
+            halfStrokeWidth = this._findLargestStrokeWidth(this._svgTag) / 2;
+        }
+        const width = bbox.width + (halfStrokeWidth * 2) || 1;
+        const height = bbox.height + (halfStrokeWidth * 2) || 1;
+        const x = bbox.x - halfStrokeWidth;
+        const y = bbox.y - halfStrokeWidth;
+        this._svgTag.setAttribute('width', width);
+        this._svgTag.setAttribute('height', height);
+        this._svgTag.setAttribute('viewBox',
+            `${x} ${y} ${width} ${height}`);
+    }
+
+    _fixSvgString(svgData) {
+        let svgString = fixupSvgString(svgData);
+        const parser = new DOMParser();
+        this._svgDom = parser.parseFromString(svgString, 'text/xml');
+        if (this._svgDom.childNodes.length < 1 ||
+            this._svgDom.documentElement.localName !== 'svg') {
+            throw new Error('Document does not appear to be SVG.');
+        }
+        this._svgTag = this._svgDom.documentElement;
+        this._transformMeasurements();
+        const XMLS = new XMLSerializer();
+        svgString = XMLS.serializeToString(this._svgDom);
+        return svgString;
     }
 
     /**
@@ -245,7 +299,8 @@ class SVGSkin extends Skin {
      * @param {Array<number>} [rotationCenter] - Optional rotation center for the SVG.
      */
     setSVG(svgData, rotationCenter) {
-        this._svgBaseTexture = new PIXI.BaseTexture(svgData);
+        const svgString = this._fixSvgString(svgData);
+        this._svgBaseTexture = new PIXI.BaseTexture(svgString);
         this._texture = new PIXI.Texture(this._svgBaseTexture);
         // 判断是否已加载 sprite，若存在，则替换 texture 并更新宽高即可
         if (this._spriteObj) {
@@ -267,7 +322,6 @@ class SVGSkin extends Skin {
         if (this._spriteObj) {
             this._visible = value;
             this._spriteObj.visible = value;
-            this.addSprite(this._spriteObj);
         }
     }
 }
