@@ -122,6 +122,7 @@ class RenderWebGL extends EventEmitter {
         });
         // 设置坐标轴原点在中心
         app.stage.transform.position.set(app.screen.width / 2, app.screen.height / 2);
+        // 设置子级是否支持排序
         app.stage.sortableChildren = true;
         window.app = app;
         return {

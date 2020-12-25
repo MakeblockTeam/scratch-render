@@ -35,6 +35,8 @@ class SVGSkin extends Skin {
         this._largestMIPScale = 0;
 
         this._size = [0, 0];
+        this._svgBaseTexture = null;
+        this._texture = null;
         this._spriteObj = null;
         this._visible = false;
         /**
@@ -186,36 +188,42 @@ class SVGSkin extends Skin {
     /**
      * 创建精灵图
      *
-     * @param {*} baseTexture
      * @memberof SVGSkin
      */
-    createSprite(baseTexture) {
-        const texture = new PIXI.Texture(baseTexture);
-        const sprite = new PIXI.Sprite.from(texture);
+    createSprite() {
+        const sprite = new PIXI.Sprite.from(this._texture);
         this._spriteObj = sprite;
         // 设置新添加角色的 zIndex，不能放在 initSprite，存在异步问题
         this._spriteObj.zIndex = this._id;
+        // 判断是否已有缓存
+        if (this._svgBaseTexture.hasLoaded) {
+            this.initSprite(this._svgBaseTexture);
+        } else {
+            this._svgBaseTexture.on('loaded', (svgInfo) => {
+                this.initSprite(svgInfo);
+            });
+        }
     }
 
     /**
      * 初始化精灵图配置
      *
-     * @param {*} baseTexture
+     * @param {*} svgInfo
      * @memberof SVGSkin
      */
-    initSprite(baseTexture) {
+    initSprite(svgInfo) {
         this.resetMIPs();
-        const { width = 0, height = 0 } = baseTexture;
+        const { width = 0, height = 0 } = svgInfo;
         // 设置宽度
-        this.spriteObj.width = width;
+        this._spriteObj.width = width;
         // 设置高度
-        this.spriteObj.height = height;
+        this._spriteObj.height = height;
         // 设置定位，默认居中
-        this.spriteObj.position.set(0, 0);
+        this._spriteObj.position.set(0, 0);
         // 设置中心点
-        this.spriteObj.anchor.set(0.5, 0.5);
+        this._spriteObj.anchor.set(0.5, 0.5);
         // 设置是否可见
-        this.spriteObj.visible = this._visible;
+        this._spriteObj.visible = this._visible;
     }
 
     /**
@@ -237,15 +245,17 @@ class SVGSkin extends Skin {
      * @param {Array<number>} [rotationCenter] - Optional rotation center for the SVG.
      */
     setSVG(svgData, rotationCenter) {
-        const baseTexture = new PIXI.BaseTexture(svgData);
-        this.createSprite(baseTexture);
-        // 判断是否已有缓存
-        if (baseTexture.hasLoaded) {
-            this.initSprite(baseTexture);
-        } else {
-            baseTexture.on('loaded', () => {
-                this.initSprite(baseTexture);
+        this._svgBaseTexture = new PIXI.BaseTexture(svgData);
+        this._texture = new PIXI.Texture(this._svgBaseTexture);
+        // 判断是否已加载 sprite，若存在，则替换 texture 并更新宽高即可
+        if (this._spriteObj) {
+            this._spriteObj.texture = this._texture;
+            this._svgBaseTexture.on('loaded', (svgInfo) => {
+                this._spriteObj.width = svgInfo.width;
+                this._spriteObj.height = svgInfo.height;
             });
+        } else {
+            this.createSprite();
         }
     }
 
@@ -254,10 +264,10 @@ class SVGSkin extends Skin {
     }
 
     set visible(value) {
-        if (this.spriteObj) {
+        if (this._spriteObj) {
             this._visible = value;
-            this.spriteObj.visible = value;
-            this.addSprite(this.spriteObj);
+            this._spriteObj.visible = value;
+            this.addSprite(this._spriteObj);
         }
     }
 }
