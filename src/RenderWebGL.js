@@ -263,6 +263,15 @@ class RenderWebGL extends EventEmitter {
         return this._gl && this._gl.canvas; // && this._gl.canvas;
     }
 
+
+    get stageWidth() {
+        return this._pixiInstance.renderer.screen.width;
+    }
+
+    get stageHeight() {
+        return this._pixiInstance.renderer.screen.height;
+    }
+
     /**
      * Set the physical size of the stage in device-independent pixels.
      * This will be multiplied by the device's pixel ratio on high-DPI displays.
@@ -710,19 +719,19 @@ class RenderWebGL extends EventEmitter {
         const drawable = this._allDrawables[drawableID];
         const { spriteObj } = drawable.skin;
         const bounds = spriteObj.getBounds();
-        console.log({ bounds });
         const { x, y, left, top, right, bottom, width, height } = bounds;
-        const cloneBounds = {
+        const actualBounds = {
             x,
             y,
             width,
             height,
-            top,
-            right,
-            bottom,
-            left,
+            top: this.stageHeight / 2 - top,
+            right: right - this.stageWidth / 2,
+            bottom: this.stageHeight / 2 - bottom,
+            left: left - this.stageWidth / 2,
         }
-        return cloneBounds;
+        console.log({ actualBounds });
+        return actualBounds;
     }
 
     /**

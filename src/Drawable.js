@@ -135,6 +135,7 @@ class Drawable {
 
         this.isTouching = this._isTouchingNever;
 
+        // 是否拖拽中
         this.isDragging = false;
     }
 
@@ -207,6 +208,10 @@ class Drawable {
 
     get rect() {
         return this.canvas.getBoundingClientRect();
+    }
+
+    get editingTarget() {
+        return this.vm.runtime.getEditingTarget();
     }
 
     /**
@@ -282,18 +287,19 @@ class Drawable {
             this.alpha = 0.5;
             startPosition = this.toLocal(event.data.global);
             if (!defaultDrawable.id) return;
-            const targetId = defaultDrawable.vm.getTargetIdForDrawableId(defaultDrawable.id);
-            if (!targetId) return;
-            const target = defaultDrawable.vm.runtime.getTargetById(targetId);
-            const editingTarget = defaultDrawable.vm.runtime.getEditingTarget();
-            if (target.id === editingTarget.id) return;
+            this.targetId = defaultDrawable.vm.getTargetIdForDrawableId(defaultDrawable.id);
+            if (!this.targetId) return;
+            const target = defaultDrawable.vm.runtime.getTargetById(this.targetId);
+            if (target.id === defaultDrawable.editingTarget.id) return;
+            defaultDrawable.vm.startDrag(this.targetId);
             defaultDrawable.vm.setEditingTarget(target.id);
         }
         const onDragEnd = function (event) {
             defaultDrawable.isDragging = false;
+            defaultDrawable.vm.stopDrag(this.targetId);
             defaultDrawable.postMouseIOData.call(defaultDrawable, event.data.originalEvent);
             this.alpha = 1;
-            this.data = null;
+            this.targetId = null;
         }
         const onDragMove = function (event) {
             defaultDrawable.postMouseIOData.call(defaultDrawable, event.data.originalEvent);
