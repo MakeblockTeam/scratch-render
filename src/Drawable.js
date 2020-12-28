@@ -6,6 +6,7 @@ const Skin = require('./Skin');
 const EffectTransform = require('./EffectTransform');
 const log = require('./util/log');
 const { STAGE_LAYER_GROUPS } = require('./enum');
+const getEventXY = require('./util/getEventXY')
 
 /**
  * An internal workspace for calculating texture locations from world vectors
@@ -133,6 +134,8 @@ class Drawable {
         this._skinWasAltered = this._skinWasAltered.bind(this);
 
         this.isTouching = this._isTouchingNever;
+
+        this.isDragging = false;
     }
 
     /**
@@ -198,61 +201,12 @@ class Drawable {
         return this._renderer._pixiInstance;
     }
 
-    /**
-     * 设置角色交互事件
-     *
-     * @param {*} skin
-     * @returns
-     * @memberof Drawable
-     */
-    setSkinDragInteractive(skin) {
-        if (!skin || this._group !== STAGE_LAYER_GROUPS.SPRITE_LAYER) return;
-        const { spriteObj } = skin;
-        const defaultDrawable = this;
-        let isDragging = false;
-        let startPosition;
-        let newPosition;
-        const onDragStart = function (event) {
-            this.alpha = 0.5;
-            isDragging = true;
-            startPosition = this.toLocal(event.data.global);
-            if (!defaultDrawable.id) return;
-            const targetId = defaultDrawable.vm.getTargetIdForDrawableId(defaultDrawable.id);
-            if (!targetId) return;
-            const target = defaultDrawable.vm.runtime.getTargetById(targetId);
-            const editingTarget = defaultDrawable.vm.runtime.getEditingTarget();
-            if (target.id === editingTarget.id) return;
-            defaultDrawable.vm.setEditingTarget(target.id);
-        }
-        const onDragEnd = function () {
-            this.alpha = 1;
-            isDragging = false;
-            this.data = null;
-        }
-        const onDragMove = function (event) {
-            if (isDragging) {
-                newPosition = this.parent.toLocal(event.data.global);
-                this.x = newPosition.x - startPosition.x * this.scale.x;
-                this.y = newPosition.y - startPosition.y * this.scale.y;
-                defaultDrawable.vm.runtime.getEditingTarget().setXY(this.x, -this.y);
-            }
-        }
-        // 设置是否支持互动
-        spriteObj.interactive = true;
-        // 设置鼠标光标悬停
-        spriteObj.buttonMode = true;
-        // 设置 cursor
-        spriteObj.cursor = 'move';
-        // 绑定事件
-        spriteObj
-            .on('mousedown', onDragStart.bind(spriteObj))
-            .on('mouseup', onDragEnd.bind(spriteObj))
-            .on('mouseupoutside', onDragEnd.bind(spriteObj))
-            .on('mousemove', onDragMove.bind(spriteObj))
-            .on('touchstart', onDragStart.bind(spriteObj))
-            .on('touchend', onDragEnd.bind(spriteObj))
-            .on('touchendoutside', onDragEnd.bind(spriteObj))
-            .on('touchmove', onDragMove.bind(spriteObj));
+    get canvas() {
+        return this._renderer.canvas;
+    }
+
+    get rect() {
+        return this.canvas.getBoundingClientRect();
     }
 
     /**
@@ -287,6 +241,85 @@ class Drawable {
         if (newRotation !== spriteObj.rotation) {
             spriteObj.rotation = newRotation;
         }
+    }
+
+    /**
+     * 发送鼠标位置数据至 vm
+     *
+     * @param {*} event
+     * @memberof Drawable
+     */
+    postMouseIOData(event) {
+        const eventXY = getEventXY(event);
+        const mousePosition = [eventXY.x - this.rect.left, eventXY.y - this.rect.top];
+        const data = {
+            isDown: this.isDragging,
+            wasDragged: this.isDragging,
+            x: mousePosition[0],
+            y: mousePosition[1],
+            canvasWidth: this.rect.width,
+            canvasHeight: this.rect.height,
+        };
+        this.vm.postIOData('mouse', data);
+    }
+
+    /**
+     * 设置角色交互事件
+     *
+     * @param {*} skin
+     * @returns
+     * @memberof Drawable
+     */
+    setSkinDragInteractive(skin) {
+        if (!skin || this._group !== STAGE_LAYER_GROUPS.SPRITE_LAYER) return;
+        const { spriteObj } = skin;
+        const defaultDrawable = this;
+        let startPosition;
+        let newPosition;
+        const onDragStart = function (event) {
+            defaultDrawable.isDragging = true;
+            defaultDrawable.postMouseIOData.call(defaultDrawable, event.data.originalEvent);
+            this.alpha = 0.5;
+            startPosition = this.toLocal(event.data.global);
+            if (!defaultDrawable.id) return;
+            const targetId = defaultDrawable.vm.getTargetIdForDrawableId(defaultDrawable.id);
+            if (!targetId) return;
+            const target = defaultDrawable.vm.runtime.getTargetById(targetId);
+            const editingTarget = defaultDrawable.vm.runtime.getEditingTarget();
+            if (target.id === editingTarget.id) return;
+            defaultDrawable.vm.setEditingTarget(target.id);
+        }
+        const onDragEnd = function (event) {
+            defaultDrawable.isDragging = false;
+            defaultDrawable.postMouseIOData.call(defaultDrawable, event.data.originalEvent);
+            this.alpha = 1;
+            this.data = null;
+        }
+        const onDragMove = function (event) {
+            defaultDrawable.postMouseIOData.call(defaultDrawable, event.data.originalEvent);
+            if (defaultDrawable.isDragging) {
+                newPosition = this.parent.toLocal(event.data.global);
+                this.x = newPosition.x - startPosition.x * this.scale.x;
+                this.y = newPosition.y - startPosition.y * this.scale.y;
+                defaultDrawable.vm.runtime.getEditingTarget().setXY(this.x, -this.y);
+            }
+        }
+        // 设置是否支持互动
+        spriteObj.interactive = true;
+        // 设置鼠标光标悬停
+        spriteObj.buttonMode = true;
+        // 设置 cursor
+        spriteObj.cursor = 'move';
+        // 绑定事件
+        spriteObj
+            .on('mousedown', onDragStart.bind(spriteObj))
+            .on('mouseup', onDragEnd.bind(spriteObj))
+            .on('mouseupoutside', onDragEnd.bind(spriteObj))
+            .on('mousemove', onDragMove.bind(spriteObj))
+            .on('touchstart', onDragStart.bind(spriteObj))
+            .on('touchend', onDragEnd.bind(spriteObj))
+            .on('touchendoutside', onDragEnd.bind(spriteObj))
+            .on('touchmove', onDragMove.bind(spriteObj));
     }
 
     /**
