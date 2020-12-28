@@ -180,7 +180,8 @@ class Drawable {
             this._skin.visible = false;
         }
         if (newSkin) {
-            newSkin.visible = true;
+            // 根据传入的值判断该角色是否展示
+            newSkin.visible = this._visible;
             this.updateNewSkinBaseInfo(newSkin);
         }
         this._skin = newSkin;
@@ -222,6 +223,7 @@ class Drawable {
      */
     updateNewSkinBaseInfo(newSkin) {
         const { spriteObj } = newSkin;
+        if(!spriteObj) return;
         // 若为背景层，层级应为最低，设置为 -Infinity
         if (this._group === STAGE_LAYER_GROUPS.BACKGROUND_LAYER) {
             spriteObj.zIndex = -Infinity;
