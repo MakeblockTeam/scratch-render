@@ -9,6 +9,7 @@ const SVGSkin = require('./SVGSkin');
 const TextBubbleSkin = require('./TextBubbleSkin');
 // const EffectTransform = require('./EffectTransform');
 const log = require('./util/log');
+const config = require('./config');
 
 const __isTouchingDrawablesPoint = [0, 0];
 const __candidatesBounds = new Rectangle();
@@ -103,7 +104,7 @@ class RenderWebGL extends EventEmitter {
      * @returns {WebGLRenderingContext} - a TWGL rendering context (backed by either WebGL 1.0 or 2.0).
      * @private
      */
-    static _getContext(canvas, w = 480, h = 360) {
+    static _getContext(canvas, w = config.defaultWidth, h = config.defaultHeight) {
         const app = new PIXI.Application({
             // 画布视图
             view: canvas,
@@ -120,11 +121,9 @@ class RenderWebGL extends EventEmitter {
             // 默认背景色
             backgroundColor: 0xffffff,
         });
-        // 设置坐标轴原点在中心
-        app.stage.transform.position.set(app.screen.width / 2, app.screen.height / 2);
         // 设置子级是否支持排序
         app.stage.sortableChildren = true;
-        window.app = app;
+        window.pixiInstance = app;
         return {
             pixiInstance: app,
             cv: app.renderer.view,
@@ -238,8 +237,8 @@ class RenderWebGL extends EventEmitter {
         this.on(RenderConstants.Events.NativeSizeChanged, this.onNativeSizeChanged);
 
         this.setBackgroundColor(1, 1, 1);
+        this.updateStageSize(config.defaultWidth, config.defaultHeight);
         this.setStageSize(xLeft || -240, xRight || 240, yBottom || -180, yTop || 180);
-        this.resize(this._nativeSize[0], this._nativeSize[1]);
 
         // gl.disable(gl.DEPTH_TEST);
         // /** @todo disable when no partial transparency? */
@@ -247,6 +246,10 @@ class RenderWebGL extends EventEmitter {
         // gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
 
         window.Render = this;
+    }
+
+    get pixiInstance() {
+        return this._pixiInstance;
     }
 
     /**
@@ -265,33 +268,11 @@ class RenderWebGL extends EventEmitter {
 
 
     get stageWidth() {
-        return this._pixiInstance.renderer.screen.width;
+        return this.pixiInstance.renderer.screen.width;
     }
 
     get stageHeight() {
-        return this._pixiInstance.renderer.screen.height;
-    }
-
-    /**
-     * Set the physical size of the stage in device-independent pixels.
-     * This will be multiplied by the device's pixel ratio on high-DPI displays.
-     * @param {int} pixelsWide The desired width in device-independent pixels.
-     * @param {int} pixelsTall The desired height in device-independent pixels.
-     */
-    resize(pixelsWide, pixelsTall) {
-        const { canvas } = this._gl;
-        const pixelRatio = window.devicePixelRatio || 1;
-        const newWidth = pixelsWide * pixelRatio;
-        const newHeight = pixelsTall * pixelRatio;
-
-        // Certain operations, such as moving the color picker, call `resize` once per frame, even though the canvas
-        // size doesn't change. To avoid unnecessary canvas updates, check that we *really* need to resize the canvas.
-        if (canvas.width !== newWidth || canvas.height !== newHeight) {
-            canvas.width = newWidth;
-            canvas.height = newHeight;
-            // Resizing the canvas causes it to be cleared, so redraw it.
-            this.draw();
-        }
+        return this.pixiInstance.renderer.screen.height;
     }
 
     /**
@@ -345,6 +326,22 @@ class RenderWebGL extends EventEmitter {
         // this._projection = twgl.m4.ortho(xLeft, xRight, yBottom, yTop, -1, 1);
 
         this._setNativeSize(Math.abs(xRight - xLeft), Math.abs(yBottom - yTop));
+    }
+
+
+    /**
+     * 更新舞台尺寸
+     * 
+     * @param {*} width 
+     * @param {*} height 
+     */
+    updateStageSize(width, height) {
+        if (this._nativeSize && this._nativeSize[0] === width && this._nativeSize[1] === height) return;
+        this.pixiInstance.renderer.resize(width, height);
+        // 设置坐标轴原点在中心
+        this.pixiInstance.stage.transform.position.set(width / 2, height / 2);
+        this.canvas.style.height = 'auto';
+        this._setNativeSize(width, height);
     }
 
     /**
@@ -685,7 +682,7 @@ class RenderWebGL extends EventEmitter {
                 spriteObj.zIndex = i;
             }
             // 更新角色排序
-            this._pixiInstance.stage.sortChildren();
+            this.pixiInstance.stage.sortChildren();
             return newIndex;
         }
 
@@ -696,18 +693,18 @@ class RenderWebGL extends EventEmitter {
      * Draw all current drawables and present the frame on the canvas.
      */
     draw() {
-        this._doExitDrawRegion();
-        const gl = this._gl;
-        // twgl.bindFramebufferInfo(gl, null);
-        gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
-        gl.clearColor(...this._backgroundColor4f);
-        gl.clear(gl.COLOR_BUFFER_BIT);
-        this._drawThese(this._drawList, ShaderManager.DRAW_MODE.default, this._projection);
-        if (this._snapshotCallbacks.length > 0) {
-            const snapshot = gl.canvas.toDataURL();
-            this._snapshotCallbacks.forEach(cb => cb(snapshot));
-            this._snapshotCallbacks = [];
-        }
+        // this._doExitDrawRegion();
+        // const gl = this._gl;
+        // // twgl.bindFramebufferInfo(gl, null);
+        // gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+        // gl.clearColor(...this._backgroundColor4f);
+        // gl.clear(gl.COLOR_BUFFER_BIT);
+        // this._drawThese(this._drawList, ShaderManager.DRAW_MODE.default, this._projection);
+        // if (this._snapshotCallbacks.length > 0) {
+        //     const snapshot = gl.canvas.toDataURL();
+        //     this._snapshotCallbacks.forEach(cb => cb(snapshot));
+        //     this._snapshotCallbacks = [];
+        // }
     }
 
     /**
