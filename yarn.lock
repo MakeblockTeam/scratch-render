@@ -109,410 +109,314 @@
     minimatch "^3.0.4"
     strip-json-comments "^3.1.1"
 
-"@pixi/accessibility@5.3.6":
-  version "5.3.6"
-  resolved "http://npm.makeblock.com/@pixi%2faccessibility/-/accessibility-5.3.6.tgz#c9e6814448ce3184f78097552d6776a32ff29930"
-  integrity sha1-yeaBREjOMYT3gJdVLWd2oy/ymTA=
+"@pixi/accessibility@5.3.7":
+  version "5.3.7"
+  resolved "http://npm.makeblock.com/@pixi%2faccessibility/-/accessibility-5.3.7.tgz#a9ca9c7c04925014af4b137b38dd8b77b208e603"
+  integrity sha1-qcqcfASSUBSvSxN7ON2Ld7II5gM=
   dependencies:
-    "@pixi/core" "5.3.6"
-    "@pixi/display" "5.3.6"
-    "@pixi/utils" "5.3.6"
+    "@pixi/core" "5.3.7"
+    "@pixi/display" "5.3.7"
+    "@pixi/utils" "5.3.7"
 
-"@pixi/app@5.3.6":
-  version "5.3.6"
-  resolved "http://npm.makeblock.com/@pixi%2fapp/-/app-5.3.6.tgz#29a8ccc5a6e7b7a9f683543c05f885a71dcdbadb"
-  integrity sha1-KajMxabnt6n2g1Q8BfiFpx3Nuts=
+"@pixi/app@5.3.7":
+  version "5.3.7"
+  resolved "http://npm.makeblock.com/@pixi%2fapp/-/app-5.3.7.tgz#1a469dcdb9a3746d98eb58f2f7fa3e0951880a82"
+  integrity sha1-GkadzbmjdG2Y61jy9/o+CVGICoI=
   dependencies:
-    "@pixi/core" "5.3.6"
-    "@pixi/display" "5.3.6"
+    "@pixi/core" "5.3.7"
+    "@pixi/display" "5.3.7"
 
-"@pixi/canvas-display@5.3.6":
-  version "5.3.6"
-  resolved "http://npm.makeblock.com/@pixi%2fcanvas-display/-/canvas-display-5.3.6.tgz#b39b9fda308e6a104e13e0090bb3e7de80817cc0"
-  integrity sha1-s5uf2jCOahBOE+AJC7Pn3oCBfMA=
+"@pixi/constants@5.3.7":
+  version "5.3.7"
+  resolved "http://npm.makeblock.com/@pixi%2fconstants/-/constants-5.3.7.tgz#a2e1789a98deb3713cfcb3eba3db84588bc9161e"
+  integrity sha1-ouF4mpjes3E8/LPro9uEWIvJFh4=
+
+"@pixi/core@5.3.7":
+  version "5.3.7"
+  resolved "http://npm.makeblock.com/@pixi%2fcore/-/core-5.3.7.tgz#a8d65ca17f0c4ef8c0c5a22d31b9e02a4ab73b93"
+  integrity sha1-qNZcoX8MTvjAxaItMbngKkq3O5M=
   dependencies:
-    "@pixi/display" "5.3.6"
+    "@pixi/constants" "5.3.7"
+    "@pixi/math" "5.3.7"
+    "@pixi/runner" "5.3.7"
+    "@pixi/settings" "5.3.7"
+    "@pixi/ticker" "5.3.7"
+    "@pixi/utils" "5.3.7"
 
-"@pixi/canvas-extract@5.3.6":
-  version "5.3.6"
-  resolved "http://npm.makeblock.com/@pixi%2fcanvas-extract/-/canvas-extract-5.3.6.tgz#4e66e39af5e64bdb2cbf8ebbd9b86af4343b6343"
-  integrity sha1-TmbjmvXmS9ssv4672bhq9DQ7Y0M=
+"@pixi/display@5.3.7":
+  version "5.3.7"
+  resolved "http://npm.makeblock.com/@pixi%2fdisplay/-/display-5.3.7.tgz#b661d2ecfd2a67f213665a0698acd29e17eee8fe"
+  integrity sha1-tmHS7P0qZ/ITZloGmKzSnhfu6P4=
   dependencies:
-    "@pixi/canvas-renderer" "5.3.6"
-    "@pixi/core" "5.3.6"
-    "@pixi/display" "5.3.6"
-    "@pixi/math" "5.3.6"
-    "@pixi/utils" "5.3.6"
+    "@pixi/math" "5.3.7"
+    "@pixi/settings" "5.3.7"
+    "@pixi/utils" "5.3.7"
 
-"@pixi/canvas-graphics@5.3.6":
-  version "5.3.6"
-  resolved "http://npm.makeblock.com/@pixi%2fcanvas-graphics/-/canvas-graphics-5.3.6.tgz#59d46be0a1fc29aefaf4a9ea6eb8d361fb13b112"
-  integrity sha1-WdRr4KH8Ka769KnqbrjTYfsTsRI=
+"@pixi/extract@5.3.7":
+  version "5.3.7"
+  resolved "http://npm.makeblock.com/@pixi%2fextract/-/extract-5.3.7.tgz#2f32b804d90621ad3187e4ae7fb959d19b3959f1"
+  integrity sha1-LzK4BNkGIa0xh+Suf7lZ0Zs5WfE=
   dependencies:
-    "@pixi/canvas-renderer" "5.3.6"
-    "@pixi/constants" "5.3.6"
-    "@pixi/core" "5.3.6"
-    "@pixi/graphics" "5.3.6"
-    "@pixi/math" "5.3.6"
+    "@pixi/core" "5.3.7"
+    "@pixi/math" "5.3.7"
+    "@pixi/utils" "5.3.7"
 
-"@pixi/canvas-mesh@5.3.6":
-  version "5.3.6"
-  resolved "http://npm.makeblock.com/@pixi%2fcanvas-mesh/-/canvas-mesh-5.3.6.tgz#93fbdbb5916c99e86a756e5b093a02dd50a9ed1a"
-  integrity sha1-k/vbtZFsmehqdW5bCToC3VCp7Ro=
+"@pixi/filter-alpha@5.3.7":
+  version "5.3.7"
+  resolved "http://npm.makeblock.com/@pixi%2ffilter-alpha/-/filter-alpha-5.3.7.tgz#e979db57e9ee47b84d0900e5f9767b8632426fb4"
+  integrity sha1-6XnbV+nuR7hNCQDl+XZ7hjJCb7Q=
   dependencies:
-    "@pixi/canvas-renderer" "5.3.6"
-    "@pixi/constants" "5.3.6"
-    "@pixi/mesh" "5.3.6"
-    "@pixi/mesh-extras" "5.3.6"
-    "@pixi/settings" "5.3.6"
+    "@pixi/core" "5.3.7"
 
-"@pixi/canvas-particles@5.3.6":
-  version "5.3.6"
-  resolved "http://npm.makeblock.com/@pixi%2fcanvas-particles/-/canvas-particles-5.3.6.tgz#4a0a08754380ee0a3cbe55f60ab525886dde4afa"
-  integrity sha1-SgoIdUOA7go8vlX2CrUliG3eSvo=
+"@pixi/filter-blur@5.3.7":
+  version "5.3.7"
+  resolved "http://npm.makeblock.com/@pixi%2ffilter-blur/-/filter-blur-5.3.7.tgz#7eee3559704b280e8588c2fc9e8d912aac80f8a9"
+  integrity sha1-fu41WXBLKA6FiML8no2RKqyA+Kk=
   dependencies:
-    "@pixi/particles" "5.3.6"
+    "@pixi/core" "5.3.7"
+    "@pixi/settings" "5.3.7"
 
-"@pixi/canvas-prepare@5.3.6":
-  version "5.3.6"
-  resolved "http://npm.makeblock.com/@pixi%2fcanvas-prepare/-/canvas-prepare-5.3.6.tgz#eec99efcef54e9e9ed6b908f721816b8205559bd"
-  integrity sha1-7sme/O9U6enta5CPchgWuCBVWb0=
+"@pixi/filter-color-matrix@5.3.7":
+  version "5.3.7"
+  resolved "http://npm.makeblock.com/@pixi%2ffilter-color-matrix/-/filter-color-matrix-5.3.7.tgz#230cafe46bde36e25441b13f3ac5dd8e8fee4311"
+  integrity sha1-Iwyv5GveNuJUQbE/OsXdjo/uQxE=
   dependencies:
-    "@pixi/canvas-renderer" "5.3.6"
-    "@pixi/core" "5.3.6"
-    "@pixi/prepare" "5.3.6"
+    "@pixi/core" "5.3.7"
 
-"@pixi/canvas-renderer@5.3.6":
-  version "5.3.6"
-  resolved "http://npm.makeblock.com/@pixi%2fcanvas-renderer/-/canvas-renderer-5.3.6.tgz#00f3b97829de7bc33088511e1a8276d40fd5a4f4"
-  integrity sha1-APO5eCnee8MwiFEeGoJ21A/VpPQ=
+"@pixi/filter-displacement@5.3.7":
+  version "5.3.7"
+  resolved "http://npm.makeblock.com/@pixi%2ffilter-displacement/-/filter-displacement-5.3.7.tgz#4364d5514221c4a03950b67795cebd1b34dca401"
+  integrity sha1-Q2TVUUIhxKA5ULZ3lc69GzTcpAE=
   dependencies:
-    "@pixi/constants" "5.3.6"
-    "@pixi/core" "5.3.6"
-    "@pixi/math" "5.3.6"
-    "@pixi/settings" "5.3.6"
-    "@pixi/utils" "5.3.6"
+    "@pixi/core" "5.3.7"
+    "@pixi/math" "5.3.7"
 
-"@pixi/canvas-sprite-tiling@5.3.6":
-  version "5.3.6"
-  resolved "http://npm.makeblock.com/@pixi%2fcanvas-sprite-tiling/-/canvas-sprite-tiling-5.3.6.tgz#d7dba3f3c59ce74bae124602857efd91d3d5b3a9"
-  integrity sha1-19uj88Wc50uuEkYChX79kdPVs6k=
+"@pixi/filter-fxaa@5.3.7":
+  version "5.3.7"
+  resolved "http://npm.makeblock.com/@pixi%2ffilter-fxaa/-/filter-fxaa-5.3.7.tgz#55b778fbc60fd87f16d17d66a36b122e2f5c3b57"
+  integrity sha1-Vbd4+8YP2H8W0X1mo2sSLi9cO1c=
   dependencies:
-    "@pixi/canvas-renderer" "5.3.6"
-    "@pixi/canvas-sprite" "5.3.6"
-    "@pixi/sprite-tiling" "5.3.6"
-    "@pixi/utils" "5.3.6"
+    "@pixi/core" "5.3.7"
 
-"@pixi/canvas-sprite@5.3.6":
-  version "5.3.6"
-  resolved "http://npm.makeblock.com/@pixi%2fcanvas-sprite/-/canvas-sprite-5.3.6.tgz#f3248306cd5a31206846b5db9d11705a0887bf2c"
-  integrity sha1-8ySDBs1aMSBoRrXbnRFwWgiHvyw=
+"@pixi/filter-noise@5.3.7":
+  version "5.3.7"
+  resolved "http://npm.makeblock.com/@pixi%2ffilter-noise/-/filter-noise-5.3.7.tgz#70e638f5d6ebc4b62b4c67f2de939a7fa900d7a5"
+  integrity sha1-cOY49dbrxLYrTGfy3pOaf6kA16U=
   dependencies:
-    "@pixi/canvas-renderer" "5.3.6"
-    "@pixi/constants" "5.3.6"
-    "@pixi/math" "5.3.6"
-    "@pixi/sprite" "5.3.6"
-    "@pixi/utils" "5.3.6"
+    "@pixi/core" "5.3.7"
 
-"@pixi/canvas-text@5.3.6":
-  version "5.3.6"
-  resolved "http://npm.makeblock.com/@pixi%2fcanvas-text/-/canvas-text-5.3.6.tgz#4ce027e3a12774f6e6a7975223c0ff5a40f26fbf"
-  integrity sha1-TOAn46EndPbmp5dSI8D/WkDyb78=
+"@pixi/graphics@5.3.7":
+  version "5.3.7"
+  resolved "http://npm.makeblock.com/@pixi%2fgraphics/-/graphics-5.3.7.tgz#36ae80e2508e0a9c61ce454807d517d370d90a74"
+  integrity sha1-Nq6A4lCOCpxhzkVIB9UX03DZCnQ=
   dependencies:
-    "@pixi/sprite" "5.3.6"
-    "@pixi/text" "5.3.6"
+    "@pixi/constants" "5.3.7"
+    "@pixi/core" "5.3.7"
+    "@pixi/display" "5.3.7"
+    "@pixi/math" "5.3.7"
+    "@pixi/sprite" "5.3.7"
+    "@pixi/utils" "5.3.7"
 
-"@pixi/constants@5.3.6":
-  version "5.3.6"
-  resolved "http://npm.makeblock.com/@pixi%2fconstants/-/constants-5.3.6.tgz#b3b61b5d5047d022df3b8bed82eeb2b052457ded"
-  integrity sha1-s7YbXVBH0CLfO4vtgu6ysFJFfe0=
-
-"@pixi/core@5.3.6":
-  version "5.3.6"
-  resolved "http://npm.makeblock.com/@pixi%2fcore/-/core-5.3.6.tgz#85559a71fd35c459c094ff30899f85cbcf8d2f81"
-  integrity sha1-hVWacf01xFnAlP8wiZ+Fy8+NL4E=
+"@pixi/interaction@5.3.7":
+  version "5.3.7"
+  resolved "http://npm.makeblock.com/@pixi%2finteraction/-/interaction-5.3.7.tgz#dd4d7b43fc266c9b0e8994f4f05cb9f73438b586"
+  integrity sha1-3U17Q/wmbJsOiZT08Fy59zQ4tYY=
   dependencies:
-    "@pixi/constants" "5.3.6"
-    "@pixi/math" "5.3.6"
-    "@pixi/runner" "5.3.6"
-    "@pixi/settings" "5.3.6"
-    "@pixi/ticker" "5.3.6"
-    "@pixi/utils" "5.3.6"
+    "@pixi/core" "5.3.7"
+    "@pixi/display" "5.3.7"
+    "@pixi/math" "5.3.7"
+    "@pixi/ticker" "5.3.7"
+    "@pixi/utils" "5.3.7"
 
-"@pixi/display@5.3.6":
-  version "5.3.6"
-  resolved "http://npm.makeblock.com/@pixi%2fdisplay/-/display-5.3.6.tgz#90a629c4d9b7a118b7b8cc0ea4b843d1b93026f3"
-  integrity sha1-kKYpxNm3oRi3uMwOpLhD0bkwJvM=
+"@pixi/loaders@5.3.7":
+  version "5.3.7"
+  resolved "http://npm.makeblock.com/@pixi%2floaders/-/loaders-5.3.7.tgz#7231106d8d490d9ca230df7a07a53e1e4d412163"
+  integrity sha1-cjEQbY1JDZyiMN96B6U+Hk1BIWM=
   dependencies:
-    "@pixi/math" "5.3.6"
-    "@pixi/settings" "5.3.6"
-    "@pixi/utils" "5.3.6"
-
-"@pixi/extract@5.3.6":
-  version "5.3.6"
-  resolved "http://npm.makeblock.com/@pixi%2fextract/-/extract-5.3.6.tgz#9e3e39a6687abfed144e88aa76b6a71ac671f14a"
-  integrity sha1-nj45pmh6v+0UToiqdranGsZx8Uo=
-  dependencies:
-    "@pixi/core" "5.3.6"
-    "@pixi/math" "5.3.6"
-    "@pixi/utils" "5.3.6"
-
-"@pixi/filter-alpha@5.3.6":
-  version "5.3.6"
-  resolved "http://npm.makeblock.com/@pixi%2ffilter-alpha/-/filter-alpha-5.3.6.tgz#c12232817c974714865b625957e82a3299f72d38"
-  integrity sha1-wSIygXyXRxSGW2JZV+gqMpn3LTg=
-  dependencies:
-    "@pixi/core" "5.3.6"
-
-"@pixi/filter-blur@5.3.6":
-  version "5.3.6"
-  resolved "http://npm.makeblock.com/@pixi%2ffilter-blur/-/filter-blur-5.3.6.tgz#805090b701b55fb5c2be218704fb7e3f1476d7a3"
-  integrity sha1-gFCQtwG1X7XCviGHBPt+PxR216M=
-  dependencies:
-    "@pixi/core" "5.3.6"
-    "@pixi/settings" "5.3.6"
-
-"@pixi/filter-color-matrix@5.3.6":
-  version "5.3.6"
-  resolved "http://npm.makeblock.com/@pixi%2ffilter-color-matrix/-/filter-color-matrix-5.3.6.tgz#466f563e20721900b202a87c8d47a5ea8e31c741"
-  integrity sha1-Rm9WPiByGQCyAqh8jUel6o4xx0E=
-  dependencies:
-    "@pixi/core" "5.3.6"
-
-"@pixi/filter-displacement@5.3.6":
-  version "5.3.6"
-  resolved "http://npm.makeblock.com/@pixi%2ffilter-displacement/-/filter-displacement-5.3.6.tgz#9ef5c615cb643fdaaed38d18e4538819aed587b8"
-  integrity sha1-nvXGFctkP9qu040Y5FOIGa7Vh7g=
-  dependencies:
-    "@pixi/core" "5.3.6"
-    "@pixi/math" "5.3.6"
-
-"@pixi/filter-fxaa@5.3.6":
-  version "5.3.6"
-  resolved "http://npm.makeblock.com/@pixi%2ffilter-fxaa/-/filter-fxaa-5.3.6.tgz#859b9021afcdf98c9062a01360de6ac596eb5f59"
-  integrity sha1-hZuQIa/N+YyQYqATYN5qxZbrX1k=
-  dependencies:
-    "@pixi/core" "5.3.6"
-
-"@pixi/filter-noise@5.3.6":
-  version "5.3.6"
-  resolved "http://npm.makeblock.com/@pixi%2ffilter-noise/-/filter-noise-5.3.6.tgz#a63a5a4390a872316dc30158b79ddeb7bc79e8fc"
-  integrity sha1-pjpaQ5CocjFtwwFYt53et7x56Pw=
-  dependencies:
-    "@pixi/core" "5.3.6"
-
-"@pixi/graphics@5.3.6":
-  version "5.3.6"
-  resolved "http://npm.makeblock.com/@pixi%2fgraphics/-/graphics-5.3.6.tgz#1d38359926d174cccd3219936285140b715344e7"
-  integrity sha1-HTg1mSbRdMzNMhmTYoUUC3FTROc=
-  dependencies:
-    "@pixi/constants" "5.3.6"
-    "@pixi/core" "5.3.6"
-    "@pixi/display" "5.3.6"
-    "@pixi/math" "5.3.6"
-    "@pixi/sprite" "5.3.6"
-    "@pixi/utils" "5.3.6"
-
-"@pixi/interaction@5.3.6":
-  version "5.3.6"
-  resolved "http://npm.makeblock.com/@pixi%2finteraction/-/interaction-5.3.6.tgz#0f2657c0aabfac529cf4e6a7fa1fc012129590fd"
-  integrity sha1-DyZXwKq/rFKc9Oan+h/AEhKVkP0=
-  dependencies:
-    "@pixi/core" "5.3.6"
-    "@pixi/display" "5.3.6"
-    "@pixi/math" "5.3.6"
-    "@pixi/ticker" "5.3.6"
-    "@pixi/utils" "5.3.6"
-
-"@pixi/loaders@5.3.6":
-  version "5.3.6"
-  resolved "http://npm.makeblock.com/@pixi%2floaders/-/loaders-5.3.6.tgz#6b2558c8634160e955ff71a10d5b4ab87786ad0c"
-  integrity sha1-ayVYyGNBYOlV/3GhDVtKuHeGrQw=
-  dependencies:
-    "@pixi/core" "5.3.6"
-    "@pixi/utils" "5.3.6"
+    "@pixi/core" "5.3.7"
+    "@pixi/utils" "5.3.7"
     resource-loader "^3.0.1"
 
-"@pixi/math@5.3.6":
-  version "5.3.6"
-  resolved "http://npm.makeblock.com/@pixi%2fmath/-/math-5.3.6.tgz#3933bae1a0af912b4384389b63ceffdcf108723a"
-  integrity sha1-OTO64aCvkStDhDibY87/3PEIcjo=
+"@pixi/math@5.3.7":
+  version "5.3.7"
+  resolved "http://npm.makeblock.com/@pixi%2fmath/-/math-5.3.7.tgz#066e7ea149fd38db8d8a9584aac5f41d02b36bdd"
+  integrity sha1-Bm5+oUn9ONuNipWEqsX0HQKza90=
 
-"@pixi/mesh-extras@5.3.6":
-  version "5.3.6"
-  resolved "http://npm.makeblock.com/@pixi%2fmesh-extras/-/mesh-extras-5.3.6.tgz#91493e22b43bb609c1a49f5777ead311a6223eef"
-  integrity sha1-kUk+IrQ7tgnBpJ9Xd+rTEaYiPu8=
+"@pixi/mesh-extras@5.3.7":
+  version "5.3.7"
+  resolved "http://npm.makeblock.com/@pixi%2fmesh-extras/-/mesh-extras-5.3.7.tgz#e4ab9e4b0cb05606a621cacd6d37d472067c6041"
+  integrity sha1-5KueSwywVgamIcrNbTfUcgZ8YEE=
   dependencies:
-    "@pixi/constants" "5.3.6"
-    "@pixi/core" "5.3.6"
-    "@pixi/math" "5.3.6"
-    "@pixi/mesh" "5.3.6"
-    "@pixi/utils" "5.3.6"
+    "@pixi/constants" "5.3.7"
+    "@pixi/core" "5.3.7"
+    "@pixi/math" "5.3.7"
+    "@pixi/mesh" "5.3.7"
+    "@pixi/utils" "5.3.7"
 
-"@pixi/mesh@5.3.6":
-  version "5.3.6"
-  resolved "http://npm.makeblock.com/@pixi%2fmesh/-/mesh-5.3.6.tgz#ab66923d8754392dd461eb98e69d023aa1865744"
-  integrity sha1-q2aSPYdUOS3UYeuY5p0COqGGV0Q=
+"@pixi/mesh@5.3.7":
+  version "5.3.7"
+  resolved "http://npm.makeblock.com/@pixi%2fmesh/-/mesh-5.3.7.tgz#9de12a6404abdd17fe14c08d2bbe163bdf72bb9a"
+  integrity sha1-neEqZASr3Rf+FMCNK74WO99yu5o=
   dependencies:
-    "@pixi/constants" "5.3.6"
-    "@pixi/core" "5.3.6"
-    "@pixi/display" "5.3.6"
-    "@pixi/math" "5.3.6"
-    "@pixi/settings" "5.3.6"
-    "@pixi/utils" "5.3.6"
+    "@pixi/constants" "5.3.7"
+    "@pixi/core" "5.3.7"
+    "@pixi/display" "5.3.7"
+    "@pixi/math" "5.3.7"
+    "@pixi/settings" "5.3.7"
+    "@pixi/utils" "5.3.7"
 
-"@pixi/mixin-cache-as-bitmap@5.3.6":
-  version "5.3.6"
-  resolved "http://npm.makeblock.com/@pixi%2fmixin-cache-as-bitmap/-/mixin-cache-as-bitmap-5.3.6.tgz#4220ca62196b989da06bac084653843651285e13"
-  integrity sha1-QiDKYhlrmJ2ga6wIRlOENlEoXhM=
+"@pixi/mixin-cache-as-bitmap@5.3.7":
+  version "5.3.7"
+  resolved "http://npm.makeblock.com/@pixi%2fmixin-cache-as-bitmap/-/mixin-cache-as-bitmap-5.3.7.tgz#2a30fc3f552f7a0a51bd0fe5a6e937132a5fff52"
+  integrity sha1-KjD8P1UvegpRvQ/lpuk3Eypf/1I=
   dependencies:
-    "@pixi/core" "5.3.6"
-    "@pixi/display" "5.3.6"
-    "@pixi/math" "5.3.6"
-    "@pixi/settings" "5.3.6"
-    "@pixi/sprite" "5.3.6"
-    "@pixi/utils" "5.3.6"
+    "@pixi/core" "5.3.7"
+    "@pixi/display" "5.3.7"
+    "@pixi/math" "5.3.7"
+    "@pixi/settings" "5.3.7"
+    "@pixi/sprite" "5.3.7"
+    "@pixi/utils" "5.3.7"
 
-"@pixi/mixin-get-child-by-name@5.3.6":
-  version "5.3.6"
-  resolved "http://npm.makeblock.com/@pixi%2fmixin-get-child-by-name/-/mixin-get-child-by-name-5.3.6.tgz#df8f424867fe5d0000c1c8865e0371146d896cc5"
-  integrity sha1-349CSGf+XQAAwciGXgNxFG2JbMU=
+"@pixi/mixin-get-child-by-name@5.3.7":
+  version "5.3.7"
+  resolved "http://npm.makeblock.com/@pixi%2fmixin-get-child-by-name/-/mixin-get-child-by-name-5.3.7.tgz#49c5aa84840bf09e2c089011665407e8c1a3466e"
+  integrity sha1-ScWqhIQL8J4sCJARZlQH6MGjRm4=
   dependencies:
-    "@pixi/display" "5.3.6"
+    "@pixi/display" "5.3.7"
 
-"@pixi/mixin-get-global-position@5.3.6":
-  version "5.3.6"
-  resolved "http://npm.makeblock.com/@pixi%2fmixin-get-global-position/-/mixin-get-global-position-5.3.6.tgz#81c54861063453efd46b5e061d7ad6a5c32cc013"
-  integrity sha1-gcVIYQY0U+/Ua14GHXrWpcMswBM=
+"@pixi/mixin-get-global-position@5.3.7":
+  version "5.3.7"
+  resolved "http://npm.makeblock.com/@pixi%2fmixin-get-global-position/-/mixin-get-global-position-5.3.7.tgz#68c0167054abbac01ecd10275212f5b9afe049bf"
+  integrity sha1-aMAWcFSrusAezRAnUhL1ua/gSb8=
   dependencies:
-    "@pixi/display" "5.3.6"
-    "@pixi/math" "5.3.6"
+    "@pixi/display" "5.3.7"
+    "@pixi/math" "5.3.7"
 
-"@pixi/particles@5.3.6":
-  version "5.3.6"
-  resolved "http://npm.makeblock.com/@pixi%2fparticles/-/particles-5.3.6.tgz#b10cd3b4b63225f022041a872d83ae8e9dda8d95"
-  integrity sha1-sQzTtLYyJfAiBBqHLYOujp3ajZU=
+"@pixi/particles@5.3.7":
+  version "5.3.7"
+  resolved "http://npm.makeblock.com/@pixi%2fparticles/-/particles-5.3.7.tgz#9f0500b818f20af8e9338fee24c1c33530dfa925"
+  integrity sha1-nwUAuBjyCvjpM4/uJMHDNTDfqSU=
   dependencies:
-    "@pixi/constants" "5.3.6"
-    "@pixi/core" "5.3.6"
-    "@pixi/display" "5.3.6"
-    "@pixi/math" "5.3.6"
-    "@pixi/utils" "5.3.6"
+    "@pixi/constants" "5.3.7"
+    "@pixi/core" "5.3.7"
+    "@pixi/display" "5.3.7"
+    "@pixi/math" "5.3.7"
+    "@pixi/utils" "5.3.7"
 
-"@pixi/polyfill@5.3.6":
-  version "5.3.6"
-  resolved "http://npm.makeblock.com/@pixi%2fpolyfill/-/polyfill-5.3.6.tgz#0e70ffc17211fb19a9c31c918e5c466de3251177"
-  integrity sha1-DnD/wXIR+xmpwxyRjlxGbeMlEXc=
+"@pixi/polyfill@5.3.7":
+  version "5.3.7"
+  resolved "http://npm.makeblock.com/@pixi%2fpolyfill/-/polyfill-5.3.7.tgz#eb43ef1eefc7967bf8d44f704677c19adfdc539c"
+  integrity sha1-60PvHu/Hlnv41E9wRnfBmt/cU5w=
   dependencies:
     es6-promise-polyfill "^1.2.0"
     object-assign "^4.1.1"
 
-"@pixi/prepare@5.3.6":
-  version "5.3.6"
-  resolved "http://npm.makeblock.com/@pixi%2fprepare/-/prepare-5.3.6.tgz#601892cab7513e4838c5701399f28e055ec15dcb"
-  integrity sha1-YBiSyrdRPkg4xXATmfKOBV7BXcs=
+"@pixi/prepare@5.3.7":
+  version "5.3.7"
+  resolved "http://npm.makeblock.com/@pixi%2fprepare/-/prepare-5.3.7.tgz#00916a56c61d8349be47937a9b384f3cf90157ca"
+  integrity sha1-AJFqVsYdg0m+R5N6mzhPPPkBV8o=
   dependencies:
-    "@pixi/core" "5.3.6"
-    "@pixi/display" "5.3.6"
-    "@pixi/graphics" "5.3.6"
-    "@pixi/settings" "5.3.6"
-    "@pixi/text" "5.3.6"
-    "@pixi/ticker" "5.3.6"
+    "@pixi/core" "5.3.7"
+    "@pixi/display" "5.3.7"
+    "@pixi/graphics" "5.3.7"
+    "@pixi/settings" "5.3.7"
+    "@pixi/text" "5.3.7"
+    "@pixi/ticker" "5.3.7"
 
-"@pixi/runner@5.3.6":
-  version "5.3.6"
-  resolved "http://npm.makeblock.com/@pixi%2frunner/-/runner-5.3.6.tgz#b123f1a674aa249e4067ff00f9a3027d01ac69a8"
-  integrity sha1-sSPxpnSqJJ5AZ/8A+aMCfQGsaag=
+"@pixi/runner@5.3.7":
+  version "5.3.7"
+  resolved "http://npm.makeblock.com/@pixi%2frunner/-/runner-5.3.7.tgz#78ed2c92b392b8c099d2e4557dded7faa921446b"
+  integrity sha1-eO0skrOSuMCZ0uRVfd7X+qkhRGs=
 
-"@pixi/settings@5.3.6":
-  version "5.3.6"
-  resolved "http://npm.makeblock.com/@pixi%2fsettings/-/settings-5.3.6.tgz#d138ba2180557174c3f942fc9656de35f1a77026"
-  integrity sha1-0Ti6IYBVcXTD+UL8llbeNfGncCY=
+"@pixi/settings@5.3.7":
+  version "5.3.7"
+  resolved "http://npm.makeblock.com/@pixi%2fsettings/-/settings-5.3.7.tgz#b661883231bf2a1ff5260c214bd0c4b438759841"
+  integrity sha1-tmGIMjG/Kh/1JgwhS9DEtDh1mEE=
   dependencies:
     ismobilejs "^1.1.0"
 
-"@pixi/sprite-animated@5.3.6":
-  version "5.3.6"
-  resolved "http://npm.makeblock.com/@pixi%2fsprite-animated/-/sprite-animated-5.3.6.tgz#5f51ce5629e9fbf206dbf5a1b4cd878e0513f886"
-  integrity sha1-X1HOVinp+/IG2/WhtM2HjgUT+IY=
+"@pixi/sprite-animated@5.3.7":
+  version "5.3.7"
+  resolved "http://npm.makeblock.com/@pixi%2fsprite-animated/-/sprite-animated-5.3.7.tgz#94e6d7657cd133a8953e476bd24e18cbfab6a978"
+  integrity sha1-lObXZXzRM6iVPkdr0k4Yy/q2qXg=
   dependencies:
-    "@pixi/core" "5.3.6"
-    "@pixi/sprite" "5.3.6"
-    "@pixi/ticker" "5.3.6"
+    "@pixi/core" "5.3.7"
+    "@pixi/sprite" "5.3.7"
+    "@pixi/ticker" "5.3.7"
 
-"@pixi/sprite-tiling@5.3.6":
-  version "5.3.6"
-  resolved "http://npm.makeblock.com/@pixi%2fsprite-tiling/-/sprite-tiling-5.3.6.tgz#9961c0bf44ce1c3644a146ffd3a6cc6ddbafb7c9"
-  integrity sha1-mWHAv0TOHDZEoUb/06bMbduvt8k=
+"@pixi/sprite-tiling@5.3.7":
+  version "5.3.7"
+  resolved "http://npm.makeblock.com/@pixi%2fsprite-tiling/-/sprite-tiling-5.3.7.tgz#f4ec4cd205ff7ecebe636062ea27f7a139fb8e22"
+  integrity sha1-9OxM0gX/fs6+Y2Bi6if3oTn7jiI=
   dependencies:
-    "@pixi/constants" "5.3.6"
-    "@pixi/core" "5.3.6"
-    "@pixi/display" "5.3.6"
-    "@pixi/math" "5.3.6"
-    "@pixi/sprite" "5.3.6"
-    "@pixi/utils" "5.3.6"
+    "@pixi/constants" "5.3.7"
+    "@pixi/core" "5.3.7"
+    "@pixi/display" "5.3.7"
+    "@pixi/math" "5.3.7"
+    "@pixi/sprite" "5.3.7"
+    "@pixi/utils" "5.3.7"
 
-"@pixi/sprite@5.3.6":
-  version "5.3.6"
-  resolved "http://npm.makeblock.com/@pixi%2fsprite/-/sprite-5.3.6.tgz#04c13b0ce1c7379a2f570d28db58d1f54ce44c55"
-  integrity sha1-BME7DOHHN5ovVw0o21jR9UzkTFU=
+"@pixi/sprite@5.3.7":
+  version "5.3.7"
+  resolved "http://npm.makeblock.com/@pixi%2fsprite/-/sprite-5.3.7.tgz#c6edf3d4a9928868696b62e35a60ded27d167058"
+  integrity sha1-xu3z1KmSiGhpa2LjWmDe0n0WcFg=
   dependencies:
-    "@pixi/constants" "5.3.6"
-    "@pixi/core" "5.3.6"
-    "@pixi/display" "5.3.6"
-    "@pixi/math" "5.3.6"
-    "@pixi/settings" "5.3.6"
-    "@pixi/utils" "5.3.6"
+    "@pixi/constants" "5.3.7"
+    "@pixi/core" "5.3.7"
+    "@pixi/display" "5.3.7"
+    "@pixi/math" "5.3.7"
+    "@pixi/settings" "5.3.7"
+    "@pixi/utils" "5.3.7"
 
-"@pixi/spritesheet@5.3.6":
-  version "5.3.6"
-  resolved "http://npm.makeblock.com/@pixi%2fspritesheet/-/spritesheet-5.3.6.tgz#de9998029adb3905d2ff755b61f65c9a45b30d05"
-  integrity sha1-3pmYAprbOQXS/3VbYfZcmkWzDQU=
+"@pixi/spritesheet@5.3.7":
+  version "5.3.7"
+  resolved "http://npm.makeblock.com/@pixi%2fspritesheet/-/spritesheet-5.3.7.tgz#826b84c8220ca41c3eba201f453d42394d4da562"
+  integrity sha1-gmuEyCIMpBw+uiAfRT1COU1NpWI=
   dependencies:
-    "@pixi/core" "5.3.6"
-    "@pixi/loaders" "5.3.6"
-    "@pixi/math" "5.3.6"
-    "@pixi/utils" "5.3.6"
+    "@pixi/core" "5.3.7"
+    "@pixi/loaders" "5.3.7"
+    "@pixi/math" "5.3.7"
+    "@pixi/utils" "5.3.7"
 
-"@pixi/text-bitmap@5.3.6":
-  version "5.3.6"
-  resolved "http://npm.makeblock.com/@pixi%2ftext-bitmap/-/text-bitmap-5.3.6.tgz#ddff3417c0626393eb259eceeaa37d44357cdff4"
-  integrity sha1-3f80F8BiY5PrJZ7O6qN9RDV83/Q=
+"@pixi/text-bitmap@5.3.7":
+  version "5.3.7"
+  resolved "http://npm.makeblock.com/@pixi%2ftext-bitmap/-/text-bitmap-5.3.7.tgz#736b489424c6e9c26c2907356e2d70e1ae2cb292"
+  integrity sha1-c2tIlCTG6cJsKQc1bi1w4a4sspI=
   dependencies:
-    "@pixi/core" "5.3.6"
-    "@pixi/display" "5.3.6"
-    "@pixi/loaders" "5.3.6"
-    "@pixi/math" "5.3.6"
-    "@pixi/mesh" "5.3.6"
-    "@pixi/settings" "5.3.6"
-    "@pixi/text" "5.3.6"
-    "@pixi/utils" "5.3.6"
+    "@pixi/core" "5.3.7"
+    "@pixi/display" "5.3.7"
+    "@pixi/loaders" "5.3.7"
+    "@pixi/math" "5.3.7"
+    "@pixi/mesh" "5.3.7"
+    "@pixi/settings" "5.3.7"
+    "@pixi/text" "5.3.7"
+    "@pixi/utils" "5.3.7"
 
-"@pixi/text@5.3.6":
-  version "5.3.6"
-  resolved "http://npm.makeblock.com/@pixi%2ftext/-/text-5.3.6.tgz#55b45c8968a28304f5b7aef289e6f062772a060a"
-  integrity sha1-VbRciWiigwT1t67yiebwYncqBgo=
+"@pixi/text@5.3.7":
+  version "5.3.7"
+  resolved "http://npm.makeblock.com/@pixi%2ftext/-/text-5.3.7.tgz#cb71b2576bdc1f66fb79977d281f9575dd06d3d5"
+  integrity sha1-y3GyV2vcH2b7eZd9KB+Vdd0G09U=
   dependencies:
-    "@pixi/core" "5.3.6"
-    "@pixi/math" "5.3.6"
-    "@pixi/settings" "5.3.6"
-    "@pixi/sprite" "5.3.6"
-    "@pixi/utils" "5.3.6"
+    "@pixi/core" "5.3.7"
+    "@pixi/math" "5.3.7"
+    "@pixi/settings" "5.3.7"
+    "@pixi/sprite" "5.3.7"
+    "@pixi/utils" "5.3.7"
 
-"@pixi/ticker@5.3.6":
-  version "5.3.6"
-  resolved "http://npm.makeblock.com/@pixi%2fticker/-/ticker-5.3.6.tgz#022416047199ae1ac875f750efddfb0a0ba20abd"
-  integrity sha1-AiQWBHGZrhrIdfdQ7937CguiCr0=
+"@pixi/ticker@5.3.7":
+  version "5.3.7"
+  resolved "http://npm.makeblock.com/@pixi%2fticker/-/ticker-5.3.7.tgz#c331b270042d507fe18543ae435a9a857a8fd5ae"
+  integrity sha1-wzGycAQtUH/hhUOuQ1qahXqP1a4=
   dependencies:
-    "@pixi/settings" "5.3.6"
+    "@pixi/settings" "5.3.7"
 
-"@pixi/utils@5.3.6":
-  version "5.3.6"
-  resolved "http://npm.makeblock.com/@pixi%2futils/-/utils-5.3.6.tgz#63ada7f024884390324b430ad19b6e031791c319"
-  integrity sha1-Y62n8CSIQ5AyS0MK0ZtuAxeRwxk=
+"@pixi/utils@5.3.7":
+  version "5.3.7"
+  resolved "http://npm.makeblock.com/@pixi%2futils/-/utils-5.3.7.tgz#55fe2a2fbf0fba842da5a602576ce68c498e7e16"
+  integrity sha1-Vf4qL78PuoQtpaYCV2zmjEmOfhY=
   dependencies:
-    "@pixi/constants" "5.3.6"
-    "@pixi/settings" "5.3.6"
+    "@pixi/constants" "5.3.7"
+    "@pixi/settings" "5.3.7"
     earcut "^2.1.5"
     eventemitter3 "^3.1.0"
     url "^0.11.0"
@@ -6018,62 +5922,45 @@ pinkie@^2.0.0:
   resolved "https://registry.yarnpkg.com/pinkie/-/pinkie-2.0.4.tgz#72556b80cfa0d48a974e80e77248e80ed4f7f870"
   integrity sha1-clVrgM+g1IqXToDnckjoDtT3+HA=
 
-pixi.js-legacy@^5.3.3:
-  version "5.3.6"
-  resolved "http://npm.makeblock.com/pixi.js-legacy/-/pixi.js-legacy-5.3.6.tgz#0876a862c31d7b076fd3875fa2bacba00c3f51a1"
-  integrity sha1-CHaoYsMdewdv04dforrLoAw/UaE=
+pixi.js@^5.3.7:
+  version "5.3.7"
+  resolved "http://npm.makeblock.com/pixi.js/-/pixi.js-5.3.7.tgz#d295076cdb631a0578ee5976d9da195087b6a50e"
+  integrity sha1-0pUHbNtjGgV47ll22doZUIe2pQ4=
   dependencies:
-    "@pixi/canvas-display" "5.3.6"
-    "@pixi/canvas-extract" "5.3.6"
-    "@pixi/canvas-graphics" "5.3.6"
-    "@pixi/canvas-mesh" "5.3.6"
-    "@pixi/canvas-particles" "5.3.6"
-    "@pixi/canvas-prepare" "5.3.6"
-    "@pixi/canvas-renderer" "5.3.6"
-    "@pixi/canvas-sprite" "5.3.6"
-    "@pixi/canvas-sprite-tiling" "5.3.6"
-    "@pixi/canvas-text" "5.3.6"
-    pixi.js "5.3.6"
-
-pixi.js@5.3.6:
-  version "5.3.6"
-  resolved "http://npm.makeblock.com/pixi.js/-/pixi.js-5.3.6.tgz#ff30272c6122e026a9ce1ca98c3d2be0bd747ec7"
-  integrity sha1-/zAnLGEi4CapzhypjD0r4L10fsc=
-  dependencies:
-    "@pixi/accessibility" "5.3.6"
-    "@pixi/app" "5.3.6"
-    "@pixi/constants" "5.3.6"
-    "@pixi/core" "5.3.6"
-    "@pixi/display" "5.3.6"
-    "@pixi/extract" "5.3.6"
-    "@pixi/filter-alpha" "5.3.6"
-    "@pixi/filter-blur" "5.3.6"
-    "@pixi/filter-color-matrix" "5.3.6"
-    "@pixi/filter-displacement" "5.3.6"
-    "@pixi/filter-fxaa" "5.3.6"
-    "@pixi/filter-noise" "5.3.6"
-    "@pixi/graphics" "5.3.6"
-    "@pixi/interaction" "5.3.6"
-    "@pixi/loaders" "5.3.6"
-    "@pixi/math" "5.3.6"
-    "@pixi/mesh" "5.3.6"
-    "@pixi/mesh-extras" "5.3.6"
-    "@pixi/mixin-cache-as-bitmap" "5.3.6"
-    "@pixi/mixin-get-child-by-name" "5.3.6"
-    "@pixi/mixin-get-global-position" "5.3.6"
-    "@pixi/particles" "5.3.6"
-    "@pixi/polyfill" "5.3.6"
-    "@pixi/prepare" "5.3.6"
-    "@pixi/runner" "5.3.6"
-    "@pixi/settings" "5.3.6"
-    "@pixi/sprite" "5.3.6"
-    "@pixi/sprite-animated" "5.3.6"
-    "@pixi/sprite-tiling" "5.3.6"
-    "@pixi/spritesheet" "5.3.6"
-    "@pixi/text" "5.3.6"
-    "@pixi/text-bitmap" "5.3.6"
-    "@pixi/ticker" "5.3.6"
-    "@pixi/utils" "5.3.6"
+    "@pixi/accessibility" "5.3.7"
+    "@pixi/app" "5.3.7"
+    "@pixi/constants" "5.3.7"
+    "@pixi/core" "5.3.7"
+    "@pixi/display" "5.3.7"
+    "@pixi/extract" "5.3.7"
+    "@pixi/filter-alpha" "5.3.7"
+    "@pixi/filter-blur" "5.3.7"
+    "@pixi/filter-color-matrix" "5.3.7"
+    "@pixi/filter-displacement" "5.3.7"
+    "@pixi/filter-fxaa" "5.3.7"
+    "@pixi/filter-noise" "5.3.7"
+    "@pixi/graphics" "5.3.7"
+    "@pixi/interaction" "5.3.7"
+    "@pixi/loaders" "5.3.7"
+    "@pixi/math" "5.3.7"
+    "@pixi/mesh" "5.3.7"
+    "@pixi/mesh-extras" "5.3.7"
+    "@pixi/mixin-cache-as-bitmap" "5.3.7"
+    "@pixi/mixin-get-child-by-name" "5.3.7"
+    "@pixi/mixin-get-global-position" "5.3.7"
+    "@pixi/particles" "5.3.7"
+    "@pixi/polyfill" "5.3.7"
+    "@pixi/prepare" "5.3.7"
+    "@pixi/runner" "5.3.7"
+    "@pixi/settings" "5.3.7"
+    "@pixi/sprite" "5.3.7"
+    "@pixi/sprite-animated" "5.3.7"
+    "@pixi/sprite-tiling" "5.3.7"
+    "@pixi/spritesheet" "5.3.7"
+    "@pixi/text" "5.3.7"
+    "@pixi/text-bitmap" "5.3.7"
+    "@pixi/ticker" "5.3.7"
+    "@pixi/utils" "5.3.7"
 
 pkg-dir@^1.0.0:
   version "1.0.0"

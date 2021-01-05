@@ -102,7 +102,7 @@ class Drawable {
             this._uniforms[effectInfo.uniformName] = converter(0);
         }
 
-        this._position = twgl.v3.create(0, 0);
+        this._position = [0, 0];
         this._scale = [100, 100];
         this._direction = 90;
         this._transformDirty = true;
@@ -172,27 +172,14 @@ class Drawable {
     }
 
     /**
-     * @param {Skin} newSkin - A new Skin for this Drawable.
-     */
-    set skin(newSkin) {
-        console.log([newSkin, this._skin]);
-        if (this._skin) {
-            this._skin.visible = false;
-        }
-        if (newSkin) {
-            // 根据传入的值判断该角色是否展示
-            newSkin.visible = this._visible;
-            this.updateNewSkinBaseInfo(newSkin);
-        }
-        this._skin = newSkin;
-        this.setSkinDragInteractive(this._skin);
-    }
-
-    /**
-     * @returns {Array<number>} the current scaling percentages applied to this Drawable. [100,100] is normal size.
-     */
+    * @returns {Array<number>} the current scaling percentages applied to this Drawable. [100,100] is normal size.
+    */
     get scale() {
         return [this._scale[0], this._scale[1]];
+    }
+
+    get renderer() {
+        return this._renderer;
     }
 
     get vm() {
@@ -211,8 +198,21 @@ class Drawable {
         return this.canvas.getBoundingClientRect();
     }
 
-    get editingTarget() {
-        return this.vm.runtime.getEditingTarget();
+    /**
+     * @param {Skin} newSkin - A new Skin for this Drawable.
+     */
+    set skin(newSkin) {
+        console.log([newSkin, this._skin]);
+        if (this._skin) {
+            this._skin.visible = false;
+        }
+        if (newSkin) {
+            // 根据传入的值判断该角色是否展示
+            newSkin.visible = this._visible;
+            this.updateNewSkinBaseInfo(newSkin);
+        }
+        this._skin = newSkin;
+        this.setSkinDragInteractive(this._skin);
     }
 
     /**
@@ -223,7 +223,7 @@ class Drawable {
      */
     updateNewSkinBaseInfo(newSkin) {
         const { spriteObj } = newSkin;
-        if(!spriteObj) return;
+        if (!spriteObj) return;
         // 若为背景层，层级应为最低，设置为 -Infinity
         if (this._group === STAGE_LAYER_GROUPS.BACKGROUND_LAYER) {
             spriteObj.zIndex = -Infinity;
@@ -248,6 +248,7 @@ class Drawable {
         if (newRotation !== spriteObj.rotation) {
             spriteObj.rotation = newRotation;
         }
+        this.renderer.markingToolGraphics.update(spriteObj);
     }
 
     /**
@@ -292,9 +293,10 @@ class Drawable {
             this.targetId = defaultDrawable.vm.getTargetIdForDrawableId(defaultDrawable.id);
             if (!this.targetId) return;
             const target = defaultDrawable.vm.runtime.getTargetById(this.targetId);
-            if (target.id === defaultDrawable.editingTarget.id) return;
+            if (target.id === defaultDrawable.renderer.editingTarget.id) return;
             defaultDrawable.vm.startDrag(this.targetId);
             defaultDrawable.vm.setEditingTarget(target.id);
+            defaultDrawable.renderer.markingToolGraphics.update();
         }
         const onDragEnd = function (event) {
             defaultDrawable.isDragging = false;
@@ -310,6 +312,7 @@ class Drawable {
                 this.x = newPosition.x - startPosition.x * this.scale.x;
                 this.y = newPosition.y - startPosition.y * this.scale.y;
                 defaultDrawable.vm.runtime.getEditingTarget().setXY(this.x, -this.y);
+                defaultDrawable.renderer.markingToolGraphics.update();
             }
         }
         // 设置是否支持互动

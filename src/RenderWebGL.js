@@ -1,5 +1,5 @@
 const EventEmitter = require('events');
-const PIXI = require('pixi.js-legacy');
+const PIXI = require('pixi.js');
 const BitmapSkin = require('./BitmapSkin');
 const Drawable = require('./Drawable');
 const Rectangle = require('./Rectangle');
@@ -10,6 +10,7 @@ const TextBubbleSkin = require('./TextBubbleSkin');
 // const EffectTransform = require('./EffectTransform');
 const log = require('./util/log');
 const config = require('./config');
+const MarkingToolGraphics = require('./plugins/marking-tool-graphics');
 
 const __isTouchingDrawablesPoint = [0, 0];
 const __candidatesBounds = new Rectangle();
@@ -160,6 +161,8 @@ class RenderWebGL extends EventEmitter {
         if (!gl) {
             throw new Error('Could not get WebGL context: this browser or environment may not support WebGL.');
         }
+        this._markingToolGraphics = new MarkingToolGraphics(this, vm, pixiInstance);
+
         this._canvas = cv;
 
         this._pixiInstance = pixiInstance;
@@ -240,14 +243,19 @@ class RenderWebGL extends EventEmitter {
         this.updateStageSize(config.defaultWidth, config.defaultHeight);
         this.setStageSize(xLeft || -240, xRight || 240, yBottom || -180, yTop || 180);
 
-        // gl.disable(gl.DEPTH_TEST);
-        // /** @todo disable when no partial transparency? */
-        // gl.enable(gl.BLEND);
-        // gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
-
         window.Render = this;
     }
 
+    /**
+     * vm
+     */
+    get vm() {
+        return this._vm;
+    }
+
+    /** 
+     * pixi 实例
+    */
     get pixiInstance() {
         return this._pixiInstance;
     }
@@ -266,14 +274,41 @@ class RenderWebGL extends EventEmitter {
         return this._gl && this._gl.canvas; // && this._gl.canvas;
     }
 
-
+    /**
+     * 舞台宽度
+     */
     get stageWidth() {
         return this.pixiInstance.renderer.screen.width;
     }
 
+    /**
+     * 舞台高度
+     */
     get stageHeight() {
         return this.pixiInstance.renderer.screen.height;
     }
+
+    /**
+     * 正在编辑的角色
+     */
+    get editingTarget() {
+        return this.vm.runtime.getEditingTarget() || {};
+    }
+
+    /**
+     * 被选中的 drawable
+     */
+    get activedDrawableId() {
+        return this.editingTarget.drawableID || 0;
+    }
+
+    /**
+     * 角色标注工具
+     */
+    get markingToolGraphics() {
+        return this._markingToolGraphics;
+    }
+
 
     /**
      * Set the background color for the stage. The stage will be cleared with this
@@ -1087,69 +1122,12 @@ class RenderWebGL extends EventEmitter {
         return false;
     }
 
+
     /**
-     * Detect which sprite, if any, is at the given location.
-     * This function will pick all drawables that are visible, unless specific
-     * candidate drawable IDs are provided.  Used for determining what is clicked
-     * or dragged.  Will not select hidden / ghosted sprites.
-     *
-     * @param {int} centerX The client x coordinate of the picking location.
-     * @param {int} centerY The client y coordinate of the picking location.
-     * @param {int} [touchWidth] The client width of the touch event (optional).
-     * @param {int} [touchHeight] The client height of the touch event (optional).
-     * @param {Array<int>} [candidateIDs] The Drawable IDs to pick from, otherwise all visible drawables.
-     * @returns {int} The ID of the topmost Drawable under the picking location, or
-     * RenderConstants.ID_NONE if there is no Drawable at that location.
+     * 可移除，同时需要修改 scratch-vm 项目中 /mouse.js src/io/_pickTarget 方法
      */
-    pick(centerX, centerY, touchWidth, touchHeight, candidateIDs) {
-        // fabric
-        const bounds = this.clientSpaceToScratchBounds(centerX, centerY, touchWidth, touchHeight);
-        if (bounds.left === -Infinity || bounds.bottom === -Infinity) {
-            return false;
-        }
-        candidateIDs = (candidateIDs || this._drawList).filter(id => {
-            const drawable = this._allDrawables[id];
-            // default pick list ignores visible and ghosted sprites.
-            if (drawable.getVisible() && drawable.getUniforms().u_ghost !== 0) {
-                const drawableBounds = drawable.getFastBounds();
-                const inRange = bounds.intersects(drawableBounds);
-                if (!inRange) return false;
-                drawable.updateCPURenderAttributes();
-                return true;
-            }
-            return false;
-        });
-        if (candidateIDs.length === 0) {
-            return false;
-        }
-        const hits = [];
-        const worldPos = twgl.v3.create(0, 0, 0);
-        // Iterate over the scratch pixels and check if any candidate can be
-        // touched at that point.
-        for (worldPos[1] = bounds.bottom; worldPos[1] <= bounds.top; worldPos[1]++) {
-            for (worldPos[0] = bounds.left; worldPos[0] <= bounds.right; worldPos[0]++) {
-                // Check candidates in the reverse order they would have been
-                // drawn. This will determine what candiate's silhouette pixel
-                // would have been drawn at the point.
-                for (let d = candidateIDs.length - 1; d >= 0; d--) {
-                    const id = candidateIDs[d];
-                    const drawable = this._allDrawables[id];
-                    if (drawable.isTouching(worldPos)) {
-                        hits[id] = (hits[id] || 0) + 1;
-                        break;
-                    }
-                }
-            }
-        }
-        // Bias toward selecting anything over nothing
-        hits[RenderConstants.ID_NONE] = 0;
-        let hit = RenderConstants.ID_NONE;
-        for (const hitID in hits) {
-            if (Object.prototype.hasOwnProperty.call(hits, hitID) && (hits[hitID] > hits[hit])) {
-                hit = hitID;
-            }
-        }
-        return Number(hit);
+    pick() {
+        return this.activedDrawableId || false;
     }
 
     /**
@@ -1508,6 +1486,7 @@ class RenderWebGL extends EventEmitter {
         // TODO: https://github.com/LLK/scratch-vm/issues/2288
         if (!drawable) return;
         drawable.updatePosition(position);
+        this.markingToolGraphics.update();
     }
 
     /**
@@ -1520,6 +1499,7 @@ class RenderWebGL extends EventEmitter {
         // TODO: https://github.com/LLK/scratch-vm/issues/2288
         if (!drawable) return;
         drawable.updateDirection(direction);
+        this.markingToolGraphics.update();
     }
 
     /**
@@ -1532,6 +1512,7 @@ class RenderWebGL extends EventEmitter {
         // TODO: https://github.com/LLK/scratch-vm/issues/2288
         if (!drawable) return;
         drawable.updateScale(scale);
+        this.markingToolGraphics.update();
     }
 
     /**
@@ -1546,6 +1527,7 @@ class RenderWebGL extends EventEmitter {
         if (!drawable) return;
         drawable.updateDirection(direction);
         drawable.updateScale(scale);
+        this.markingToolGraphics.update();
     }
 
     /**
@@ -1558,6 +1540,7 @@ class RenderWebGL extends EventEmitter {
         // TODO: https://github.com/LLK/scratch-vm/issues/2288
         if (!drawable) return;
         drawable.updateVisible(visible);
+        this.markingToolGraphics.visible = visible;
     }
 
     /**
@@ -1571,6 +1554,7 @@ class RenderWebGL extends EventEmitter {
         // TODO: https://github.com/LLK/scratch-vm/issues/2288
         if (!drawable) return;
         drawable.updateEffect(effectName, value);
+        this.markingToolGraphics.update();
     }
 
     /**

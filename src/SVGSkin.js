@@ -1,4 +1,4 @@
-const PIXI = require('pixi.js-legacy');
+const PIXI = require('pixi.js');
 const Skin = require('./Skin');
 const ShaderManager = require('./ShaderManager');
 const fixupSvgString = require('./util/fixup-svg-string');
@@ -34,10 +34,15 @@ class SVGSkin extends Skin {
 
         /** @type {number} */
         this._largestMIPScale = 0;
+        /** 传入的 svg 节点 */
         this._svgDom = null;
+        /** 传入的 svg 节点 document */
         this._svgTag = null;
+        /** 传入的 svg 基础纹理 */
         this._svgBaseTexture = null;
+        /** 实际纹理 */
         this._texture = null;
+        /** 精灵对象 */
         this._spriteObj = null;
         this._visible = false;
         /**
@@ -53,6 +58,10 @@ class SVGSkin extends Skin {
     dispose() {
         this.resetMIPs();
         super.dispose();
+    }
+
+    set spriteObj(sprite) {
+        this._spriteObj = sprite;
     }
 
     /**
@@ -193,9 +202,9 @@ class SVGSkin extends Skin {
      */
     createSprite() {
         const sprite = new PIXI.Sprite.from(this._texture);
-        this._spriteObj = sprite;
+        this.spriteObj = sprite;
         // 设置新添加角色的 zIndex，不能放在 initSprite，存在异步问题
-        this._spriteObj.zIndex = this._id;
+        this.spriteObj.zIndex = this._id;
         // 判断是否已有缓存
         if (this._svgBaseTexture.hasLoaded) {
             this.initSprite(this._svgBaseTexture);
@@ -217,15 +226,17 @@ class SVGSkin extends Skin {
         this.resetMIPs();
         const { width = 0, height = 0 } = svgInfo;
         // 设置宽度
-        this._spriteObj.width = width;
+        this.spriteObj.width = width;
         // 设置高度
-        this._spriteObj.height = height;
-        // 设置定位，默认居中
-        this._spriteObj.position.set(0, 0);
+        this.spriteObj.height = height;
         // 设置中心点
-        this._spriteObj.anchor.set(0.5, 0.5);
+        this.spriteObj.anchor.set(0.5, 0.5);
         // 设置是否可见
-        this._spriteObj.visible = this._visible;
+        this.spriteObj.visible = this._visible;
+        // 创建标注工具
+        this.renderer.markingToolGraphics.create();
+        // 更新标注工具
+        this.renderer.markingToolGraphics.update(this.spriteObj);
     }
 
     _findLargestStrokeWidth(rootNode) {
@@ -293,21 +304,17 @@ class SVGSkin extends Skin {
         return svgString;
     }
 
-    /**
-     * Set the contents of this skin to a snapshot of the provided SVG data.
-     * @param {string} svgData - new SVG to use.
-     * @param {Array<number>} [rotationCenter] - Optional rotation center for the SVG.
-     */
-    setSVG(svgData, rotationCenter) {
+    setSVG(svgData) {
         const svgString = this._fixSvgString(svgData);
         this._svgBaseTexture = new PIXI.BaseTexture(svgString);
         this._texture = new PIXI.Texture(this._svgBaseTexture);
         // 判断是否已加载 sprite，若存在，则替换 texture 并更新宽高即可
-        if (this._spriteObj) {
-            this._spriteObj.texture = this._texture;
+        if (this.spriteObj) {
+            this.spriteObj.texture = this._texture;
             this._svgBaseTexture.on('loaded', (svgInfo) => {
-                this._spriteObj.width = svgInfo.width;
-                this._spriteObj.height = svgInfo.height;
+                this.spriteObj.width = svgInfo.width;
+                this.spriteObj.height = svgInfo.height;
+                this.renderer.markingToolGraphics.update();
             });
         } else {
             this.createSprite();
@@ -319,9 +326,9 @@ class SVGSkin extends Skin {
     }
 
     set visible(value) {
-        if (this._spriteObj) {
+        if (this.spriteObj) {
             this._visible = value;
-            this._spriteObj.visible = value;
+            this.spriteObj.visible = value;
         }
     }
 }
