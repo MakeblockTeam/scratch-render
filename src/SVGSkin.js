@@ -1,7 +1,7 @@
 const PIXI = require('pixi.js');
 const Skin = require('./Skin');
 const ShaderManager = require('./ShaderManager');
-const fixupSvgString = require('./util/fixup-svg-string');
+const getSvgString = require('./util/getSvgString');
 
 const MAX_TEXTURE_DIMENSION = 2048;
 
@@ -34,10 +34,6 @@ class SVGSkin extends Skin {
 
         /** @type {number} */
         this._largestMIPScale = 0;
-        /** 传入的 svg 节点 */
-        this._svgDom = null;
-        /** 传入的 svg 节点 document */
-        this._svgTag = null;
         /** 传入的 svg 基础纹理 */
         this._svgBaseTexture = null;
         /** 实际纹理 */
@@ -239,73 +235,8 @@ class SVGSkin extends Skin {
         this.renderer.markingToolGraphics.update(this.spriteObj);
     }
 
-    _findLargestStrokeWidth(rootNode) {
-        let largestStrokeWidth = 0;
-        const collectStrokeWidths = domElement => {
-            if (domElement.getAttribute) {
-                if (domElement.getAttribute('stroke')) {
-                    largestStrokeWidth = Math.max(largestStrokeWidth, 1);
-                }
-                if (domElement.getAttribute('stroke-width')) {
-                    largestStrokeWidth = Math.max(
-                        largestStrokeWidth,
-                        Number(domElement.getAttribute('stroke-width')) || 0
-                    );
-                }
-            }
-            for (let i = 0; i < domElement.childNodes.length; i++) {
-                collectStrokeWidths(domElement.childNodes[i]);
-            }
-        };
-        collectStrokeWidths(rootNode);
-        return largestStrokeWidth;
-    }
-
-    _transformMeasurements() {
-        const svgSpot = document.createElement('span');
-        const tempTag = this._svgTag.cloneNode(/* deep */ true);
-        let bbox;
-        try {
-            svgSpot.appendChild(tempTag);
-            document.body.appendChild(svgSpot);
-            bbox = tempTag.getBBox();
-        } finally {
-            document.body.removeChild(svgSpot);
-            svgSpot.removeChild(tempTag);
-        }
-        let halfStrokeWidth;
-        if (bbox.width === 0 || bbox.height === 0) {
-            halfStrokeWidth = 0;
-        } else {
-            halfStrokeWidth = this._findLargestStrokeWidth(this._svgTag) / 2;
-        }
-        const width = bbox.width + (halfStrokeWidth * 2) || 1;
-        const height = bbox.height + (halfStrokeWidth * 2) || 1;
-        const x = bbox.x - halfStrokeWidth;
-        const y = bbox.y - halfStrokeWidth;
-        this._svgTag.setAttribute('width', width);
-        this._svgTag.setAttribute('height', height);
-        this._svgTag.setAttribute('viewBox',
-            `${x} ${y} ${width} ${height}`);
-    }
-
-    _fixSvgString(svgData) {
-        let svgString = fixupSvgString(svgData);
-        const parser = new DOMParser();
-        this._svgDom = parser.parseFromString(svgString, 'text/xml');
-        if (this._svgDom.childNodes.length < 1 ||
-            this._svgDom.documentElement.localName !== 'svg') {
-            throw new Error('Document does not appear to be SVG.');
-        }
-        this._svgTag = this._svgDom.documentElement;
-        this._transformMeasurements();
-        const XMLS = new XMLSerializer();
-        svgString = XMLS.serializeToString(this._svgDom);
-        return svgString;
-    }
-
     setSVG(svgData) {
-        const svgString = this._fixSvgString(svgData);
+        const svgString = getSvgString(svgData);
         this._svgBaseTexture = new PIXI.BaseTexture(svgString);
         this._texture = new PIXI.Texture(this._svgBaseTexture);
         // 判断是否已加载 sprite，若存在，则替换 texture 并更新宽高即可
